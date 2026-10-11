@@ -1,0 +1,25 @@
+{
+  "name": "omni-chat-monitor",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/main.ts",
+    "dev": "node --env-file=.env src/main.ts",
+    "test": "node --test src/rules.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "nodemailer": "10.0.16",
+    "pg": "8.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/nodemailer": "^7.0.0",
+    "@types/pg": "8.23.1",
+    "typescript": "^5.9.0"
+  }
+}

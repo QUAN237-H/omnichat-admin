@@ -1,0 +1,2478 @@
+/*
+  Brand layer: the OmniChat logo, the 3D clay icon set and the few places
+  where colour and depth replace empty space. The clay icons have transparent
+  backgrounds but keep a faint light rim, so they belong on light surfaces.
+*/
+
+body {
+  background:
+    radial-gradient(900px 360px at 85% -120px, rgb(47 75 255 / 0.08), transparent 70%),
+    radial-gradient(600px 280px at -10% -80px, rgb(255 176 32 / 0.07), transparent 70%),
+    var(--canvas);
+  background-attachment: fixed;
+}
+
+.art3d {
+  flex-shrink: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.brand-wordmark {
+  display: block;
+  width: auto;
+  mix-blend-mode: multiply;
+}
+
+img.brand-wordmark.brand-wordmark-on-dark {
+  display: none;
+}
+
+/* The tagline starts under the "O" of OmniChat, not under the bubble. */
+.brand-lockup {
+  display: inline-grid;
+  justify-items: start;
+}
+
+.brand-tagline {
+  margin: calc(var(--wm-h) * -0.2) 0 0 calc(var(--wm-h) * 0.9);
+  color: var(--text-3);
+  font-size: max(10px, calc(var(--wm-h) * 0.33));
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.brand-mark {
+  flex-shrink: 0;
+  border-radius: 24%;
+}
+
+/* ---------- Sidebar ---------- */
+
+.app-sidebar .app-brand {
+  min-height: 44px;
+  padding: 0 var(--s-1);
+}
+
+.app-sidebar .brand-wordmark {
+  height: 30px;
+}
+
+.app-sidebar .brand-lockup {
+  margin-left: -6px;
+}
+
+.app-sidebar {
+  gap: var(--s-3);
+  background:
+    radial-gradient(260px 180px at 0% 0%, rgb(47 75 255 / 0.07), transparent 70%),
+    radial-gradient(220px 160px at 100% 100%, rgb(255 176 32 / 0.06), transparent 70%),
+    var(--sidebar);
+}
+
+.app-shop-card {
+  display: grid;
+  gap: var(--s-2);
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.app-shop-card-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 2px;
+  border-radius: 10px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.app-shop-card-link:hover {
+  text-decoration: none;
+}
+
+.app-shop-card-link .art3d {
+  width: 40px;
+  height: 40px;
+  transition: transform 460ms var(--ease-spring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-shop-card-link:hover .art3d {
+    transform: rotate(-6deg) scale(1.06);
+  }
+}
+
+.app-shop-card-mark {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.app-shop-card-mark > img {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface-2);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.app-shop-card-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.app-shop-card .app-brand-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.app-shop-card .app-topbar-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--danger);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.app-shop-card .app-topbar-status[data-state='connected'] {
+  color: var(--success);
+}
+
+.app-shop-card .app-topbar-status[data-state='paused'] {
+  color: var(--warning);
+}
+
+.app-shop-card-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  border-radius: 10px;
+  background: var(--accent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+.app-shop-card-action:hover {
+  background: var(--accent-press);
+  color: #fff;
+  text-decoration: none;
+}
+
+.app-shop-card-action:active {
+  transform: scale(0.97);
+}
+
+/* Nav rows carry the same clay icons as the phone tabs: muted until hovered or chosen. */
+.app-sidebar .app-nav {
+  gap: 2px;
+}
+
+.app-nav-label {
+  margin: var(--s-3) 0 2px;
+  padding: 0 10px;
+  color: var(--text-3);
+  font-size: 0.6875rem;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.app-sidebar .app-nav-link,
+.app-sidebar button.app-nav-link {
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 10px 0 6px;
+  border-radius: 12px;
+}
+
+.app-nav-art {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  color: var(--text-3);
+}
+
+.app-nav-art .art3d {
+  width: 28px;
+  height: 28px;
+  filter: grayscale(0.7);
+  opacity: 0.75;
+  transition:
+    filter var(--dur) var(--ease-out),
+    opacity var(--dur) var(--ease-out),
+    transform 460ms var(--ease-spring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-nav-link:hover .app-nav-art .art3d {
+    filter: none;
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+.app-sidebar .app-nav-link[aria-current='page'] {
+  background: var(--surface);
+  box-shadow:
+    0 1px 2px rgb(14 17 40 / 0.06),
+    0 0 0 1px var(--border);
+  color: var(--accent-text);
+  font-weight: var(--weight-semibold);
+}
+
+.app-nav-link[aria-current='page'] .app-nav-art .art3d {
+  filter: none;
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+.app-nav-link:active .app-nav-art .art3d {
+  transform: scale(0.92);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-nav-art .art3d,
+  .app-shop-card-link .art3d {
+    transition: none;
+  }
+}
+
+/* ---------- Phone header ---------- */
+
+/* Soft caret tip under Talk — rare, auto-hides, grows from the button. */
+.talk-tip-anchor {
+  position: relative;
+  overflow: visible;
+}
+
+.launch-tip {
+  /* Same clay blues as the Talk message-wave SVG (art-svg voice bubble). */
+  --tip-blue: #3450f0;
+  --tip-blue-deep: #1d31bf;
+  --tip-blue-lit: #6f8cff;
+  --tip-origin-x: calc(100% - 18px);
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 30;
+  width: max-content;
+  max-width: min(220px, calc(100vw - 80px));
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(165deg, var(--tip-blue-lit) 0%, var(--tip-blue) 42%, var(--tip-blue-deep) 100%);
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgb(14 28 110 / 0.28),
+    0 8px 20px rgb(52 80 240 / 0.28);
+  cursor: default;
+  transform-origin: var(--tip-origin-x) -10px;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 220ms var(--ease-out);
+  will-change: opacity, transform;
+}
+
+:root[data-theme='dark'] .launch-tip {
+  /* Same face blue as the art; soft ring so it sits on graphite. */
+  background: linear-gradient(165deg, var(--tip-blue-lit) 0%, var(--tip-blue) 48%, var(--tip-blue-deep) 100%);
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.45),
+    0 10px 24px rgb(29 49 191 / 0.35),
+    inset 0 0 0 1px rgb(157 178 255 / 0.22);
+}
+
+.launch-tip[data-phase='in'] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.launch-tip[data-phase='prep'],
+.launch-tip[data-phase='out'] {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.97);
+  pointer-events: none;
+}
+
+.launch-tip::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: 14px;
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  transform: rotate(45deg);
+  border-radius: 2px;
+  box-shadow: -1px -1px 1px rgb(0 0 0 / 0.04);
+}
+
+.launch-tip-text {
+  margin: 0;
+  color: inherit;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launch-tip {
+    transition: opacity 120ms var(--ease-out);
+    transform: none;
+  }
+
+  .launch-tip[data-phase='in'] {
+    transform: none;
+  }
+
+  .launch-tip[data-phase='prep'],
+  .launch-tip[data-phase='out'] {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-topbar {
+    min-height: calc(64px + env(safe-area-inset-top));
+    padding-inline: var(--s-5) var(--s-4);
+    background: var(--bar-bg);
+  }
+
+  /* Workspace-style lockup: the OmniChat mark carries the WhatsApp state as a
+     presence dot, the shop name is the menu trigger, the state reads underneath. */
+  button.app-topbar-shop {
+    gap: var(--s-3);
+  }
+
+  .app-topbar-mark {
+    position: relative;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    box-shadow:
+      0 1px 2px rgb(20 22 43 / 0.08),
+      0 6px 14px -8px rgb(47 75 255 / 0.55);
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+
+  .app-topbar-mark .brand-mark,
+  .app-topbar-mark .app-topbar-logo {
+    display: block;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .app-topbar-mark .app-topbar-logo {
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface);
+  }
+
+  .app-topbar-mark:has(.app-topbar-logo) {
+    border-radius: 50%;
+  }
+
+  .app-topbar-mark > .app-wa-dot {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    width: 12px;
+    height: 12px;
+    border: 2.5px solid var(--bg);
+    box-shadow: none;
+  }
+
+  button.app-topbar-shop:active .app-topbar-mark {
+    transform: scale(0.94);
+  }
+
+  .app-topbar-text {
+    gap: 1px;
+  }
+
+  .app-topbar-name {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    font-variation-settings: 'opsz' 32;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .app-topbar-state {
+    color: var(--danger);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+  }
+
+  .app-topbar-state[data-state='connected'] {
+    color: var(--success);
+  }
+
+  .app-topbar-state[data-state='paused'] {
+    color: var(--warning);
+  }
+
+  .app-topbar-name-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .app-topbar-caret {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--text-3);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  button.app-topbar-shop:active .app-topbar-caret {
+    transform: translateY(1px);
+  }
+
+  .app-topbar-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    padding: 3px 9px 3px 7px;
+    border-radius: var(--r-full);
+    background: var(--danger-soft);
+    color: var(--danger);
+    font-size: 0.6875rem;
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+  }
+
+  .app-topbar-pill[data-state='connected'] {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+
+  .app-topbar-pill[data-state='paused'] {
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+
+  .app-topbar-pill[data-state='connected'] > .app-wa-dot {
+    box-shadow: none;
+  }
+
+  @keyframes live-pulse {
+    50% {
+      box-shadow: 0 0 0 4px rgb(36 138 61 / 0.18);
+    }
+  }
+
+  /* Bottom tabs: clay icons, muted until chosen. The colour itself marks the active tab. */
+  .app-tab,
+  button.app-tab {
+    gap: 3px;
+  }
+
+  .app-tab-icon {
+    width: 56px;
+    height: 32px;
+  }
+
+  .app-tab-icon .art3d {
+    width: 30px;
+    height: 30px;
+    filter: grayscale(1);
+    opacity: 0.5;
+    transition:
+      filter var(--dur) var(--ease-out),
+      opacity var(--dur) var(--ease-out),
+      transform 460ms var(--ease-spring);
+  }
+
+  .app-tab[aria-current='page'] .app-tab-icon .art3d {
+    filter: none;
+    opacity: 1;
+    transform: translateY(-2px) scale(1.14);
+  }
+
+  .app-tab:active .app-tab-icon .art3d {
+    transform: scale(0.9);
+  }
+
+  .app-tab[aria-current='page'] {
+    color: var(--accent-text);
+  }
+}
+
+/* ---------- Menu sheet (vaul drawer behind the shop name and More) ---------- */
+
+/* While the menu is open the page behind stays put: no scroll, no rubber-band
+   bounce that would slide it into view under the sheet. */
+html:has(.menu-sheet[data-state='open']) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.menu-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  touch-action: none;
+  overscroll-behavior: none;
+  background: rgb(14 17 40 / 0.32);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/* One white surface; sections are split by hairlines instead of boxed. */
+.menu-sheet {
+  --sheet-bg: #fff;
+  --sheet-rule: rgb(14 17 40 / 0.07);
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  max-height: 92dvh;
+  margin-inline: auto;
+  max-width: 560px;
+  padding: var(--s-2) var(--s-4) calc(var(--s-4) + env(safe-area-inset-bottom));
+  border-radius: 28px 28px 0 0;
+  background: var(--sheet-bg);
+  box-shadow: 0 -12px 40px -12px rgb(14 17 40 / 0.3);
+  outline: none;
+  overscroll-behavior: none;
+}
+
+/* vaul's overscroll extension below the sheet inherits the background; keep it plain. */
+.menu-sheet[data-vaul-drawer]::after {
+  background: var(--sheet-bg);
+}
+
+.menu-sheet .menu-sheet-handle {
+  width: 40px;
+  height: 5px;
+  margin: 2px auto var(--s-1);
+  border-radius: 999px;
+  background: rgb(14 17 40 / 0.16);
+  opacity: 1;
+}
+
+.menu-sheet-shop {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-1) var(--s-4);
+  border-bottom: 1px solid var(--sheet-rule);
+}
+
+.menu-sheet-shop-link {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 420ms var(--ease-spring);
+}
+
+.menu-sheet-shop-link:hover {
+  text-decoration: none;
+}
+
+.menu-sheet-shop-link:active {
+  transform: scale(0.98);
+}
+
+.menu-sheet-shop-art {
+  width: 60px;
+  height: 60px;
+}
+
+.menu-sheet-shop-text {
+  display: grid;
+  flex: 1;
+  gap: 6px;
+  min-width: 0;
+}
+
+.menu-sheet-shop-action {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: var(--r-full);
+  background: var(--accent);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 4px 12px -4px rgb(47 75 255 / 0.5);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+  transition: transform var(--dur-press) var(--ease-out);
+}
+
+.menu-sheet-shop-action:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.menu-sheet-shop-action:active {
+  transform: scale(0.96);
+}
+
+.menu-sheet .menu-sheet-shop-logo {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 6px 14px -8px rgb(14 17 40 / 0.35);
+}
+
+.menu-sheet .menu-sheet-name {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  font-variation-settings: 'opsz' 32;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu-sheet .app-topbar-pill {
+  padding: 0;
+  background: none;
+}
+
+.menu-sheet-shop-cta {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 2px;
+  color: var(--accent-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.menu-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-1);
+}
+
+.menu-sheet-grid .menu-tile {
+  min-height: 84px;
+  gap: 4px;
+  padding-block: var(--s-2);
+  font-weight: var(--weight-medium);
+}
+
+.menu-sheet-grid .menu-tile .art3d {
+  width: 42px;
+  height: 42px;
+}
+
+.menu-sheet .menu-sheet-shop-logo,
+.menu-sheet .menu-sheet-shop-art {
+  width: 52px;
+  height: 52px;
+}
+
+.menu-sheet .menu-sheet-shop {
+  padding-bottom: var(--s-3);
+}
+
+/* ---------- Language switch (More menu, sidebar footer) ---------- */
+
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  min-height: 52px;
+  padding: var(--s-2) var(--s-1);
+}
+
+.lang-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--text);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+
+.lang-toggle-label svg {
+  color: var(--accent-text);
+}
+
+.lang-toggle-seg {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+}
+
+.lang-toggle-seg button {
+  min-height: 36px;
+  padding: 0 var(--s-4);
+  border: 0;
+  border-radius: var(--r-full);
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.lang-toggle-seg button[aria-pressed='true'] {
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lang-toggle-seg button:hover:not([aria-pressed='true']) {
+    color: var(--text);
+  }
+}
+
+/* Menu language band: flush to the hairlines above and below (cancel sheet gap). */
+.menu-sheet .lang-toggle {
+  align-items: stretch;
+  min-height: 48px;
+  margin: 0 0 calc(-1 * var(--s-3));
+  padding: 0 var(--s-1);
+  border-top: 1px solid var(--sheet-rule);
+}
+
+.menu-sheet .lang-toggle .lang-toggle-label {
+  align-self: center;
+}
+
+.menu-sheet .lang-toggle .lang-toggle-seg {
+  align-self: stretch;
+  box-sizing: border-box;
+  padding: 0;
+  border-radius: var(--r-md);
+}
+
+.menu-sheet .lang-toggle .lang-toggle-seg button {
+  min-height: 100%;
+  height: 100%;
+  border-radius: var(--r-md);
+}
+
+.menu-sheet .menu-sheet-install {
+  margin: var(--s-3) 0 var(--s-1);
+  animation: none;
+}
+
+.menu-sheet-install > svg {
+  flex: none;
+  color: var(--text-3);
+}
+
+.lang-toggle[data-compact] {
+  min-height: 44px;
+  padding: var(--s-1) var(--s-2) var(--s-1) var(--s-3);
+}
+
+.lang-toggle[data-compact] .lang-toggle-label {
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.lang-toggle[data-compact] .lang-toggle-label svg {
+  color: inherit;
+}
+
+.lang-toggle[data-compact] .lang-toggle-seg button {
+  min-height: 28px;
+  padding: 0 var(--s-3);
+  font-size: var(--text-xs);
+}
+
+/* Floating corner switch on sign-in screens: globe + EN/FR, nothing else. */
+.lang-toggle[data-pill] {
+  gap: 6px;
+  min-height: 0;
+  padding: 3px 3px 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgb(14 17 40 / 0.06), 0 6px 18px -8px rgb(14 17 40 / 0.18);
+}
+
+.lang-toggle[data-pill] .lang-toggle-label svg {
+  color: var(--accent-text);
+}
+
+.lang-toggle[data-pill] .lang-toggle-seg button {
+  min-width: 40px;
+  min-height: 30px;
+  padding: 0 var(--s-2);
+  letter-spacing: 0.04em;
+}
+
+.menu-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 100px;
+  padding: var(--s-3) var(--s-1) var(--s-2);
+  border-radius: 20px;
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform 420ms var(--ease-spring);
+}
+
+.menu-tile:hover {
+  text-decoration: none;
+}
+
+/* Starting a talk: a thin ring turns around the mic until the employee is on the line. */
+.talk-trigger,
+.talk-nav-link .app-nav-art {
+  position: relative;
+}
+
+/* The voice waveform in code; connecting, its bars bounce one after another. */
+.voice-bars {
+  flex: none;
+  overflow: visible;
+}
+
+.voice-bars .vb-bar {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.voice-bars[data-loading] .vb-bar {
+  animation: voice-bar-bounce 760ms ease-in-out infinite alternate;
+}
+
+@keyframes voice-bar-bounce {
+  from {
+    transform: scaleY(0.35);
+  }
+  to {
+    transform: scaleY(1.1);
+  }
+}
+
+/* A talk is on: the mic in the top bar and the sidebar carries a small live dot. */
+.talk-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--success);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+.talk-menu .notif-trigger .talk-live-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.talk-nav-link .talk-live-dot {
+  margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-bars[data-loading] .vb-bar {
+    animation: voice-bar-fade 1.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes voice-bar-fade {
+    to {
+      opacity: 0.4;
+    }
+  }
+}
+
+.menu-tile .art3d {
+  width: 48px;
+  height: 48px;
+  transition: transform 460ms var(--ease-spring);
+}
+
+.menu-tile:active {
+  transform: scale(0.94);
+}
+
+.menu-tile:active .art3d {
+  transform: scale(1.1) rotate(-6deg);
+}
+
+/* The current page is marked by colour and a dot, never a filled box. */
+.menu-tile[aria-current='page'] {
+  color: var(--accent-text);
+}
+
+.menu-tile[aria-current='page'] > span::after {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 4px;
+  margin: 4px auto 0;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.menu-sheet[data-state='open'] .menu-tile {
+  animation: tile-in 520ms var(--ease-spring) calc(90ms + var(--i, 0) * 35ms) both; /* impeccable-disable-line bounce-easing -- iOS sheet spring, requested */
+}
+
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+    scale: 0.9;
+  }
+}
+
+/* Wordmark flush left, Sign out flush right, both on the row's centre line. */
+.menu-sheet-foot {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  min-height: 56px;
+  padding: var(--s-2) var(--s-1) 0;
+  border-top: 1px solid var(--sheet-rule);
+}
+
+.menu-sheet-brand {
+  display: grid;
+  gap: 2px;
+}
+
+.menu-sheet-foot .brand-wordmark {
+  display: block;
+  flex: none;
+  height: 22px;
+  margin: 0;
+  opacity: 0.7;
+}
+
+.menu-sheet .menu-sheet-signout {
+  flex: none;
+  gap: var(--s-2);
+  min-height: 44px;
+  margin: 0 calc(-1 * var(--s-3)) 0 auto;
+  padding: 0 var(--s-3);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--danger);
+  font-weight: var(--weight-semibold);
+  transition: transform 380ms var(--ease-spring);
+}
+
+.menu-sheet .menu-sheet-signout:hover:not(:disabled) {
+  background: var(--danger-soft);
+}
+
+.menu-sheet .menu-sheet-signout:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+/* A centred modal over the whole screen. It springs out of the Sign out
+   button (--origin-*, measured on open) and shrinks back into it. */
+.signout-dialog {
+  width: min(340px, calc(100% - 48px));
+  max-width: none;
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  overflow: visible;
+}
+
+.signout-dialog::backdrop {
+  background: var(--overlay-scrim);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.signout-dialog[data-phase='open']::backdrop {
+  animation: signout-fade-in 220ms var(--ease-out) both;
+}
+
+.signout-dialog[data-phase='closing']::backdrop {
+  animation: signout-fade-out 240ms var(--ease-out) both;
+}
+
+.signout-panel {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+  padding: var(--s-6) var(--s-5) var(--s-5);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: 0 24px 60px -16px rgb(14 17 40 / 0.35), 0 2px 6px rgb(14 17 40 / 0.08);
+  text-align: center;
+  transform-origin: var(--origin-x) var(--origin-y);
+}
+
+.signout-dialog[data-phase='closed'] .signout-panel {
+  opacity: 0;
+}
+
+.signout-dialog[data-phase='open'] .signout-panel {
+  animation:
+    signout-scale-in 560ms var(--ease-spring) both, /* impeccable-disable-line bounce-easing -- same iOS 26 morph spring as the Add menu, requested */
+    signout-fade-in 180ms var(--ease-out) both;
+}
+
+.signout-dialog[data-phase='closing'] .signout-panel {
+  animation:
+    signout-scale-out 280ms var(--ease-drawer) both,
+    signout-fade-out 200ms var(--ease-out) 80ms both;
+}
+
+.signout-dialog[data-phase='open'] .signout-panel > * {
+  animation: signout-item-in 360ms var(--ease-out) calc(80ms + var(--i, 0) * 30ms) both;
+}
+
+.signout-panel > :nth-child(2) {
+  --i: 1;
+}
+
+.signout-panel > :nth-child(3) {
+  --i: 2;
+}
+
+.signout-panel > :nth-child(4) {
+  --i: 3;
+}
+
+@keyframes signout-scale-in {
+  from {
+    scale: 0.2;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes signout-scale-out {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 0.2;
+  }
+}
+
+@keyframes signout-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes signout-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes signout-item-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+.signout-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--s-1);
+  border-radius: 999px;
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.signout-dialog .signout-title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.017em;
+}
+
+.signout-text {
+  max-width: 26ch;
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--text-sm);
+}
+
+.signout-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-2);
+  width: 100%;
+  margin-top: var(--s-3);
+}
+
+.signout-actions button {
+  min-height: 48px;
+  border-radius: 16px;
+}
+
+@media (min-width: 769px) {
+  .menu-sheet-overlay,
+  .menu-sheet {
+    display: none;
+  }
+}
+
+/* ---------- Desk hero ---------- */
+
+/* The greeting card: soft blue wash with a warm corner glow, one piece of
+   art that sits on the card without a tile of its own. */
+.desk-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-4);
+  margin-bottom: var(--s-5);
+  padding: var(--s-6);
+  overflow: hidden;
+  border: 1px solid rgb(47 75 255 / 0.14);
+  border-radius: 20px;
+  background:
+    radial-gradient(420px 220px at 100% 0%, rgb(255 176 32 / 0.16), transparent 70%),
+    linear-gradient(135deg, #ffffff 30%, #eceffe);
+  box-shadow: 0 1px 2px rgb(20 22 43 / 0.04), 0 12px 32px -20px rgb(47 75 255 / 0.35);
+}
+
+.desk-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 var(--s-1);
+  color: var(--accent-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.desk-hero h1 {
+  margin: 0;
+  font-size: clamp(1.625rem, 4vw, 2.125rem);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.desk-hero-line {
+  max-width: 44ch;
+  margin: var(--s-2) 0 0;
+  color: var(--text-2);
+  font-size: var(--text-md);
+  text-wrap: pretty;
+}
+
+.desk-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+}
+
+/* Like the stat tiles, the art is tucked into the corner and cut off by the card edge. */
+.desk-hero {
+  isolation: isolate;
+}
+
+.desk-hero-copy {
+  --hero-art-room: 120px;
+  position: relative;
+  padding-right: var(--hero-art-room);
+}
+
+/* Buttons are opaque, so they may run over the art and keep their full width. */
+.desk-hero-copy .desk-hero-actions {
+  margin-right: calc(-1 * var(--hero-art-room));
+}
+
+.desk-hero-art {
+  position: absolute;
+  right: -26px;
+  bottom: -30px;
+  z-index: -1;
+  width: 176px;
+  height: 176px;
+  rotate: -10deg;
+  pointer-events: none;
+  animation: art-bob 5s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes art-bob {
+  to {
+    transform: translateY(-5px) rotate(-3deg);
+  }
+}
+
+@media (max-width: 560px) {
+  .desk-hero {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-3);
+    margin-bottom: var(--s-3);
+    padding: var(--s-4);
+    border-radius: 16px;
+  }
+
+  .desk-hero-copy {
+    --hero-art-room: 64px;
+  }
+
+  .desk-hero-art {
+    right: -18px;
+    bottom: -20px;
+    width: 96px;
+    height: 96px;
+  }
+
+  .desk-hero-eyebrow {
+    display: none;
+  }
+
+  .desk-hero h1 {
+    font-size: 1.375rem;
+  }
+
+  /* Two lines at most: the full story is in the lists below. */
+  .desk-hero-line {
+    display: -webkit-box;
+    margin-top: var(--s-1);
+    overflow: hidden;
+    font-size: var(--text-sm);
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .desk-hero-actions {
+    margin-top: var(--s-3);
+  }
+
+  .desk-hero-actions > * {
+    flex: 1 1 auto;
+  }
+}
+
+/* ---------- Desk layout ---------- */
+
+.desk-page .desk-stats {
+  margin-bottom: var(--s-4);
+}
+
+.desk-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-3);
+  margin-bottom: var(--s-8);
+}
+
+.desk-shortcut {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+  padding: var(--s-3) var(--s-4) var(--s-3) var(--s-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+.desk-shortcut:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .desk-shortcut:hover {
+    border-color: rgb(47 75 255 / 0.3);
+    box-shadow: 0 8px 20px -12px rgb(47 75 255 / 0.4);
+    text-decoration: none;
+  }
+
+  .desk-shortcut:hover .art3d {
+    transform: translateY(-2px) rotate(-4deg);
+  }
+}
+
+.desk-shortcut-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+}
+
+.desk-shortcut-art .art3d {
+  width: 48px;
+  height: 48px;
+  transition: transform 460ms var(--ease-spring);
+}
+
+.desk-shortcut:active .art3d {
+  transform: scale(1.08) rotate(-5deg);
+}
+
+.desk-shortcut-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.desk-shortcut-text strong {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+
+.desk-shortcut-text span {
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: var(--text-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desk-columns {
+  display: grid;
+  gap: 0 var(--s-6);
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  .desk-columns {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 960px) {
+  .desk-shortcuts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.desk-shortcuts-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Wide desktop: the desk becomes a working surface. Greeting, numbers and the
+   two live lists take the main column; WhatsApp status and shortcuts sit in a
+   rail on the right that stays in view while the lists scroll. */
+@media (min-width: 1280px) {
+  .desk-page {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(300px, 23vw, 380px);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      'hero wa'
+      'stats rail'
+      'columns rail';
+    column-gap: var(--s-6);
+    align-items: start;
+  }
+
+  .desk-page > .desk-hero {
+    grid-area: hero;
+    margin-bottom: var(--s-4);
+  }
+
+  .desk-page > .wa-banner,
+  .desk-page > .wa-card {
+    grid-area: wa;
+    align-self: stretch;
+    margin-bottom: var(--s-4);
+  }
+
+  .desk-page > .wa-banner {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding: var(--s-5);
+    border-radius: 20px;
+  }
+
+  .desk-page > .wa-banner .wa-banner-main {
+    align-items: flex-start;
+  }
+
+  .desk-page > .wa-banner .wa-banner-actions > * {
+    flex: 1;
+  }
+
+  .desk-page > .wa-card {
+    padding: var(--s-5);
+    border-radius: 20px;
+  }
+
+  .desk-page > .desk-stats {
+    grid-area: stats;
+    margin: 0 0 var(--s-6);
+  }
+
+  .desk-page > .desk-columns {
+    grid-area: columns;
+  }
+
+  .desk-page > .desk-shortcuts {
+    position: sticky;
+    top: var(--s-6);
+    grid-area: rail;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    margin: 0;
+    padding: var(--s-2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface);
+  }
+
+  .desk-page .desk-shortcuts-title {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    margin: var(--s-2) var(--s-2) var(--s-2);
+    color: var(--text-2);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0;
+  }
+
+  .desk-page .desk-shortcut {
+    padding: var(--s-2) var(--s-3) var(--s-2) var(--s-2);
+    border: 0;
+    border-radius: var(--r-md);
+    background: transparent;
+  }
+
+  .desk-page .desk-shortcut-art,
+  .desk-page .desk-shortcut-art .art3d {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (min-width: 1280px) and (hover: hover) and (pointer: fine) {
+  .desk-page .desk-shortcut:hover {
+    border-color: transparent;
+    background: var(--surface-2);
+    box-shadow: none;
+  }
+}
+
+/* The two lists sit side by side only when each still gets a usable width. */
+@media (min-width: 1280px) and (max-width: 1599px) {
+  .desk-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Phones: a four-across app grid, icon over label, like a wallet app's services row. */
+@media (max-width: 768px) {
+  .desk-shortcuts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--s-1);
+    margin-bottom: var(--s-5);
+    padding: var(--s-2) var(--s-1);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+  }
+
+  .desk-shortcut {
+    flex-direction: column;
+    gap: 4px;
+    padding: 2px 0;
+    border: 0;
+    background: transparent;
+    text-align: center;
+  }
+
+  .desk-shortcut:active {
+    transform: scale(0.94);
+  }
+
+  .desk-shortcut-art,
+  .desk-shortcut-art .art3d {
+    width: 40px;
+    height: 40px;
+  }
+
+  .desk-shortcut[data-featured] .voice-orb {
+    scale: 0.75;
+  }
+
+  /* The three numbers share one strip with dividers instead of three cards. */
+  .desk-page .desk-stats {
+    gap: 0;
+    margin: 0 0 var(--s-3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .desk-page .desk-stat {
+    gap: 0;
+    padding: var(--s-2) var(--s-3);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .desk-page .desk-stat + .desk-stat {
+    border-inline-start: 1px solid var(--border);
+  }
+
+  .desk-page .desk-stat .art3d {
+    display: none;
+  }
+
+  .desk-page .desk-stat-label {
+    font-size: var(--text-xs);
+  }
+
+  .desk-page .desk-stat-value {
+    font-size: 1.25rem;
+  }
+
+  .desk-shortcut-text strong {
+    font-size: var(--text-xs);
+  }
+
+  .desk-shortcut-text span {
+    display: none;
+  }
+}
+
+/* Talk sits in the row like the others, on the voice screen's resting orb. */
+.desk-shortcut[data-featured] .desk-shortcut-art {
+  position: relative;
+  isolation: isolate;
+}
+
+.desk-shortcut[data-featured] .voice-orb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+/* ---------- Desk stat tiles ---------- */
+
+/* The art is a faint watermark tucked into the corner, cut off by the card edge. */
+.desk-stat {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.desk-stat .art3d {
+  position: absolute;
+  right: -18px;
+  bottom: -22px;
+  z-index: -1;
+  width: 84px;
+  height: 84px;
+  opacity: 0.14;
+  rotate: -14deg;
+  pointer-events: none;
+}
+
+.desk-stat-label,
+.desk-stat-value {
+  position: relative;
+}
+
+.desk-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-variation-settings: 'opsz' 48;
+}
+
+@media (max-width: 420px) {
+  .desk-stat .art3d {
+    right: -16px;
+    bottom: -18px;
+    width: 68px;
+    height: 68px;
+  }
+}
+
+/* ---------- Empty states with art ---------- */
+
+.empty-state .art3d {
+  margin-bottom: var(--s-1);
+}
+
+.empty-state:has(> .art3d) {
+  padding-block: var(--s-8);
+}
+
+/* ---------- Auth ---------- */
+
+.auth-mark.brand {
+  display: block;
+  width: min(100%, 380px);
+  height: auto;
+  margin-right: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  text-align: left;
+}
+
+.auth-mark.brand .brand-wordmark {
+  height: 34px;
+}
+
+.auth-mark.brand .brand-lockup {
+  margin: 0 auto 0 -8px;
+}
+
+.auth-art {
+  position: absolute;
+  z-index: 1;
+  animation: art-bob 6s var(--ease-in-out) infinite alternate;
+}
+
+.auth-art-1 { top: 9%; left: 8%; }
+.auth-art-2 { top: 13%; right: 8%; animation-delay: -2s; }
+.auth-art-3 { bottom: 12%; left: 9%; animation-delay: -4s; }
+.auth-art-4 { bottom: 8%; right: 9%; animation-delay: -1s; }
+
+@media (max-width: 1180px) {
+  .auth-art {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+.auth-done-art,
+.connect-art {
+  margin: 0 0 var(--s-3) -6px;
+}
+
+.connect-art {
+  width: 64px;
+  height: 64px;
+}
+
+.connect-done .connect-art {
+  width: 88px;
+  height: 88px;
+  margin-bottom: var(--s-4);
+}
+
+/* Phones: the art rides beside the heading and description, about as tall as
+   that block. The copy is kept short enough to stay at two lines beside it. */
+@media (max-width: 959px) {
+  .connect-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--s-2);
+    align-items: center;
+  }
+
+  .connect-intro .wizard-count {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin: 0 0 var(--s-3);
+  }
+
+  .connect-intro .auth-header,
+  .connect-intro .connect-art {
+    grid-row: 2;
+  }
+
+  .connect-done .connect-intro .auth-header,
+  .connect-done .connect-intro .connect-art {
+    grid-row: 1;
+  }
+
+  .connect-intro .auth-header {
+    grid-column: 1;
+  }
+
+  .connect-intro .connect-art,
+  .connect-done .connect-intro .connect-art {
+    grid-column: 2;
+    width: 88px;
+    height: 88px;
+    margin: 0 -8px 0 0;
+  }
+}
+
+/* ---------- Settings and sheets ---------- */
+
+.inset-icon.has-art {
+  background: transparent;
+}
+
+/* ---------- Add menu: the pill morphs into its menu (iOS 26 style) ---------- */
+
+.add-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* No fill or border: the label and clay plus sit straight on the header. */
+.add-menu .add-trigger {
+  gap: 2px;
+  min-height: 44px;
+  height: 44px;
+  /* The plus lands exactly where the panel's close icon sits (44px button, 32px icon, -1px nudge). */
+  padding: 0 7px 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  box-shadow: none;
+  /* Fades back in over the last 110ms of add-menu-shrink, as the panel fades out. */
+  transition:
+    transform 420ms var(--ease-spring),
+    opacity 110ms linear 170ms;
+}
+
+.add-menu .add-trigger .art3d {
+  width: 32px;
+  height: 32px;
+  transition: transform 420ms var(--ease-spring);
+}
+
+.add-menu .add-trigger:hover:not(:disabled) {
+  background: transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .add-menu .add-trigger:hover .art3d {
+    transform: rotate(90deg) scale(1.06);
+  }
+}
+
+.add-menu .add-trigger:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.add-menu .add-trigger:active .art3d {
+  transform: rotate(45deg) scale(0.92);
+}
+
+.add-menu[data-phase='open'] .add-trigger {
+  opacity: 0;
+  transition: opacity 90ms var(--ease-out);
+}
+
+/* The shadow sits on the wrapper so it follows the clipped shape as it grows. */
+.add-menu-pop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 30;
+  width: min(304px, calc(100vw - 24px));
+  filter: drop-shadow(0 18px 28px rgb(14 17 40 / 0.18)) drop-shadow(0 2px 4px rgb(14 17 40 / 0.08));
+}
+
+.add-menu-panel {
+  overflow: hidden;
+  border-radius: 26px;
+  background: var(--surface);
+  transform-origin: calc(100% - var(--trigger-h) / 2) calc(var(--trigger-h) / 2);
+  animation: add-menu-grow 560ms var(--ease-spring) both; /* impeccable-disable-line bounce-easing -- iOS 26 menu morph spring, requested */
+}
+
+.add-menu[data-phase='closing'] .add-menu-panel {
+  animation: add-menu-shrink 280ms var(--ease-drawer) both;
+}
+
+@keyframes add-menu-grow {
+  from {
+    clip-path: inset(0 0 calc(100% - var(--trigger-h)) calc(100% - var(--trigger-w)) round calc(var(--trigger-h) / 2));
+    scale: 0.94;
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 26px);
+    scale: 1;
+  }
+}
+
+/* Ends at exactly the trigger's footprint, unscaled, so the hand-back has nothing to jump. */
+@keyframes add-menu-shrink {
+  from {
+    clip-path: inset(0 0 0 0 round 26px);
+    opacity: 1;
+    animation-timing-function: var(--ease-drawer);
+  }
+  60.7% {
+    opacity: 1;
+    animation-timing-function: linear;
+  }
+  to {
+    clip-path: inset(0 0 calc(100% - var(--trigger-h)) calc(100% - var(--trigger-w)) round calc(var(--trigger-h) / 2));
+    opacity: 0;
+  }
+}
+
+.add-menu-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding-left: var(--s-4);
+}
+
+.add-menu-title {
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  animation: add-item-in 360ms var(--ease-out) 60ms both;
+}
+
+.add-menu .add-menu-close {
+  width: 44px;
+  min-height: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.add-menu .add-menu-close:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.add-menu-close .art3d {
+  width: 32px;
+  height: 32px;
+  translate: -1px 0;
+  animation: plus-to-close 520ms var(--ease-spring) both; /* impeccable-disable-line bounce-easing -- iOS 26 menu morph spring, requested */
+}
+
+@keyframes plus-to-close {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 45deg;
+  }
+}
+
+/* A transition can't start from an animated value, so the way back is its own
+   animation. It finishes before the trigger fades in, so the two pluses match. */
+.add-menu[data-phase='closing'] .add-menu-close .art3d {
+  animation: close-to-plus 170ms var(--ease-drawer) both;
+}
+
+@keyframes close-to-plus {
+  from {
+    rotate: 45deg;
+  }
+  to {
+    rotate: 0deg;
+  }
+}
+
+.add-menu-list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 2px var(--s-2) var(--s-2);
+  list-style: none;
+}
+
+.add-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 58px;
+  padding: 7px var(--s-3) 7px 8px;
+  border-radius: 18px;
+  color: var(--text);
+  text-decoration: none;
+  animation: add-item-in 420ms var(--ease-out) calc(70ms + var(--i, 0) * 32ms) both;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform 380ms var(--ease-spring);
+}
+
+.add-menu-item:hover,
+.add-menu-item:focus-visible {
+  background: var(--surface-2);
+  text-decoration: none;
+}
+
+.add-menu-item:focus-visible {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.add-menu-item:active {
+  background: var(--accent-soft);
+  transform: scale(0.97);
+}
+
+.add-menu[data-phase='closing'] .add-menu-item,
+.add-menu[data-phase='closing'] .add-menu-title {
+  animation: add-item-out 140ms var(--ease-out) both;
+}
+
+@keyframes add-item-in {
+  from {
+    opacity: 0;
+    translate: 6px -8px;
+    scale: 0.96;
+  }
+}
+
+@keyframes add-item-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.add-menu-art {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+}
+
+.add-menu-art .art3d {
+  width: 42px;
+  height: 42px;
+  transition: transform 460ms var(--ease-spring);
+}
+
+.add-menu-item:active .art3d {
+  transform: scale(1.1) rotate(-6deg);
+}
+
+.add-menu-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.add-menu-text strong {
+  font-size: 0.9375rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1.25;
+}
+
+.add-menu-text span {
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 0.78125rem;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Notifications: the bell rides the Add morph (shared classes) ---------- */
+
+.app-topbar-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.notif-menu .notif-trigger {
+  position: relative;
+  justify-content: center;
+  width: 44px;
+  padding: 0;
+}
+
+/* The bell swings rather than spins like the plus. */
+@media (hover: hover) and (pointer: fine) {
+  .notif-menu .add-trigger:hover .art3d {
+    transform: rotate(-12deg) scale(1.06);
+  }
+}
+
+.notif-menu .add-trigger:active .art3d {
+  transform: rotate(10deg) scale(0.92);
+}
+
+.notif-menu .add-menu-pop {
+  width: min(340px, calc(100vw - 24px));
+}
+
+.notif-menu .add-menu-close .art3d {
+  translate: 0 0;
+  transform-origin: 50% 12%;
+  animation: bell-ring 640ms var(--ease-out) both;
+}
+
+.notif-menu[data-phase='closing'] .add-menu-close .art3d {
+  animation: none;
+}
+
+@keyframes bell-ring {
+  0% {
+    rotate: 0deg;
+  }
+  20% {
+    rotate: 14deg;
+  }
+  40% {
+    rotate: -10deg;
+  }
+  60% {
+    rotate: 6deg;
+  }
+  80% {
+    rotate: -3deg;
+  }
+  100% {
+    rotate: 0deg;
+  }
+}
+
+.notif-badge {
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--r-full);
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+.notif-trigger .notif-badge {
+  position: absolute;
+  top: 3px;
+  right: 1px;
+  border: 2px solid var(--bg);
+  min-width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.app-nav-link .notif-badge {
+  margin-left: auto;
+}
+
+.notif-menu-list {
+  max-height: min(360px, 60vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.notif-menu-empty {
+  margin: 0;
+  padding: var(--s-2) var(--s-4) var(--s-4);
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  animation: add-item-in 420ms var(--ease-out) 70ms both;
+}
+
+.notif-menu-foot {
+  padding: 0 var(--s-2) var(--s-2);
+}
+
+.notif-menu-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  color: var(--accent-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+  animation: add-item-in 420ms var(--ease-out) calc(70ms + var(--i, 0) * 32ms) both;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform 380ms var(--ease-spring);
+}
+
+.notif-menu-all:hover,
+.notif-menu-all:focus-visible {
+  background: var(--accent-soft);
+  text-decoration: none;
+}
+
+.notif-menu-all:active {
+  transform: scale(0.97);
+}
+
+.notif-menu[data-phase='closing'] .notif-item,
+.notif-menu[data-phase='closing'] .notif-menu-all,
+.notif-menu[data-phase='closing'] .notif-menu-empty {
+  animation: add-item-out 140ms var(--ease-out) both;
+}
+
+.notif-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: 10px var(--s-4) 10px var(--s-3);
+  color: var(--text);
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.notif-item:hover,
+.notif-item:focus-visible {
+  background: var(--surface-2);
+  text-decoration: none;
+}
+
+.notif-menu .notif-item {
+  border-radius: 18px;
+  padding-inline: 8px var(--s-3);
+  animation: add-item-in 420ms var(--ease-out) calc(70ms + var(--i, 0) * 32ms) both;
+}
+
+.notif-item:active {
+  background: var(--accent-soft);
+}
+
+.notif-item-art {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+}
+
+.notif-item-art .art3d {
+  width: 38px;
+  height: 38px;
+}
+
+.notif-item-text {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.notif-item-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+  min-width: 0;
+}
+
+.notif-item-top strong {
+  overflow: hidden;
+  font-size: 0.9375rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notif-item:not([data-unread]) .notif-item-top strong {
+  font-weight: var(--weight-medium);
+}
+
+.notif-item-when {
+  flex-shrink: 0;
+  color: var(--text-3);
+  font-size: var(--text-xs);
+}
+
+.notif-item-body {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  white-space: pre-line;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.notif-item-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-top: 7px;
+  border-radius: var(--r-full);
+  background: var(--accent);
+}
+
+.notif-list > li {
+  --sep-inset: calc(var(--s-3) + 40px + var(--s-3));
+}
+
+.notif-section + .notif-section {
+  margin-top: var(--s-5);
+}
+
+.notif-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  margin-bottom: var(--s-2);
+}
+
+.notif-section-head h2 {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.notif-page .notif-filters {
+  margin-bottom: var(--s-4);
+}
+
+.notif-page .notif-filters .catalog-filters {
+  flex: 1 1 100%;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.notif-page .notif-filters .catalog-filters::-webkit-scrollbar {
+  display: none;
+}
+
+/* Arrived from a notification: the card it points at glows once. */
+.desk-list > li[data-focus] {
+  animation: focus-glow 2400ms var(--ease-out) 200ms both;
+}
+
+@keyframes focus-glow {
+  0%,
+  45% {
+    background: var(--accent-soft);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notif-menu .add-menu-close .art3d,
+  .notif-menu .notif-item,
+  .notif-menu-all,
+  .notif-menu-empty {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk-hero-art,
+  .app-topbar-pill > .app-wa-dot,
+  .auth-art {
+    animation: none;
+  }
+
+  .add-menu-panel,
+  .add-menu-item,
+  .add-menu-title {
+    animation: add-fade-in 140ms var(--ease-out) both;
+  }
+
+  .add-menu[data-phase='closing'] .add-menu-panel {
+    animation: add-item-out 120ms var(--ease-out) both;
+  }
+
+  .signout-dialog[data-phase='open'] .signout-panel,
+  .signout-dialog[data-phase='open'] .signout-panel > * {
+    animation: signout-fade-in 140ms var(--ease-out) both;
+  }
+
+  .signout-dialog[data-phase='closing'] .signout-panel {
+    animation: signout-fade-out 120ms var(--ease-out) both;
+  }
+
+  .add-menu-close .art3d,
+  .add-menu[data-phase='closing'] .add-menu-close .art3d {
+    animation: none;
+    rotate: 45deg;
+  }
+
+  .seg .seg-thumb,
+  .segmented .seg-thumb {
+    transition: none;
+  }
+
+  .menu-sheet[data-state='open'] .menu-tile {
+    animation: add-fade-in 160ms var(--ease-out) both;
+  }
+
+  .app-tab-icon .art3d,
+  .menu-tile .art3d,
+  .desk-shortcut-art .art3d,
+  .add-menu-art .art3d {
+    transition: none;
+  }
+}
+
+@keyframes add-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---------- Admin number confirm ---------- */
+
+.admin-confirm-art {
+  display: block;
+  margin-bottom: var(--s-3);
+}
+
+.confirm-dialog .admin-confirm-number {
+  margin: 0 0 var(--s-4);
+  color: var(--text);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-confirm-steps {
+  display: grid;
+  gap: var(--s-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-confirm-steps li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: start;
+  color: var(--text-2);
+  font-size: var(--text-base);
+  line-height: 1.45;
+}
+
+.admin-confirm-step-n {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-full);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.confirm-dialog .admin-confirm-warn {
+  margin: var(--s-4) 0 0;
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--warning-soft);
+  color: var(--text);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}

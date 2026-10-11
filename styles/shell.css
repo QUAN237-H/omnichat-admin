@@ -1,0 +1,287 @@
+/*
+  App frame. Desktop: an inverted-L with a sidebar one step dimmer than the
+  content. Phones: content full width, a blurred tab bar in thumb reach, and a
+  "More" bottom sheet for the less frequent screens.
+*/
+
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  min-height: 100dvh;
+}
+
+.app-bare main {
+  max-width: 420px;
+  padding-top: clamp(var(--s-10), 12vh, 120px);
+}
+
+/* ---------- Sidebar ---------- */
+
+.app-sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  height: 100dvh;
+  padding: var(--s-3) var(--s-3) var(--s-4);
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 40px;
+  padding: 0 var(--s-2);
+}
+
+.app-brand-name {
+  overflow: hidden;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-nav {
+  display: grid;
+  gap: 2px;
+}
+
+.app-nav-link,
+button.app-nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-height: 32px;
+  padding: 0 var(--s-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-2);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.app-nav-link:active:not(:disabled) {
+  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-nav-link:hover,
+  button.app-nav-link:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--text) 5%, transparent);
+    color: var(--text);
+    text-decoration: none;
+  }
+}
+
+.app-nav-link[aria-current='page'] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-xs), 0 0 0 1px var(--border);
+}
+
+.app-nav-link svg {
+  color: var(--text-3);
+}
+
+.app-nav-link[aria-current='page'] svg {
+  color: var(--text);
+}
+
+.app-sidebar-footer {
+  display: grid;
+  gap: 2px;
+  margin-top: auto;
+}
+
+/* ---------- WhatsApp status ---------- */
+
+.app-wa-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: var(--r-full);
+  background: var(--warning);
+}
+
+[data-state='connected'] > .app-wa-dot {
+  background: var(--success);
+  box-shadow: 0 0 0 3px var(--success-soft);
+}
+
+[data-state='unlinked'] > .app-wa-dot {
+  background: var(--danger);
+}
+
+.app-main {
+  min-width: 0;
+}
+
+.offline-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: var(--s-3) var(--s-4) 0;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+}
+
+.offline-notice svg {
+  flex: none;
+}
+
+/* ---------- Tab bar and top bar (phones) ---------- */
+
+.app-topbar,
+.app-tabbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-sidebar {
+    display: none;
+  }
+
+  .app-main {
+    padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+  }
+
+  .app-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    min-height: calc(56px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) var(--s-4) 0;
+    background: var(--bar-bg);
+    border-bottom: 1px solid transparent;
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    transition: border-color var(--dur) var(--ease-out);
+  }
+
+  .app-topbar[data-scrolled] {
+    border-bottom-color: var(--border);
+  }
+
+  button.app-topbar-shop {
+    justify-content: flex-start;
+    gap: 10px;
+    min-width: 0;
+    min-height: var(--touch);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .app-topbar-text {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .app-topbar-name {
+    overflow: hidden;
+    font-size: 0.9375rem;
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .app-topbar-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-2);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    line-height: 1.2;
+  }
+
+  .app-connect-banner {
+    width: calc(100% - 2 * var(--s-4));
+    margin-top: var(--s-3);
+  }
+
+  .app-tabbar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+    padding: 0 var(--s-2) env(safe-area-inset-bottom);
+    background: var(--bar-bg);
+    border-top: 1px solid var(--border);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  .app-tab,
+  button.app-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: var(--tabbar-h);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-3);
+    font-size: 0.6875rem;
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      transform var(--dur-press) var(--ease-out);
+  }
+
+  .app-tab:active {
+    transform: scale(0.94);
+  }
+
+  .app-tab-icon {
+    display: grid;
+    place-items: center;
+    height: 26px;
+  }
+
+  .app-tab[aria-current='page'] {
+    color: var(--accent);
+    font-weight: var(--weight-semibold);
+  }
+
+}
