@@ -65,8 +65,13 @@ export async function enableOpsPush(subscribe: (input: {
       auth,
       userAgent: navigator.userAgent,
     });
-    return result.ok ? 'enabled' : 'failed';
-  } catch {
+    if (!result.ok) {
+      console.warn('ops push subscribe failed', result.error);
+      return 'failed';
+    }
+    return 'enabled';
+  } catch (error) {
+    console.warn('ops push enable failed', error);
     return 'failed';
   }
 }

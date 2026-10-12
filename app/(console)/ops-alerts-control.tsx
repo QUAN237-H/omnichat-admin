@@ -44,7 +44,11 @@ export default function OpsAlertsControl() {
     setMessage(null);
     setStatus('busy');
     startTransition(async () => {
-      const result = await enableOpsPush(subscribeOpsPush);
+      const result = await enableOpsPush(async (input) => {
+        const saved = await subscribeOpsPush(input);
+        if (!saved.ok) setMessage(saved.error);
+        return saved;
+      });
       if (result === 'enabled') {
         setStatus('on');
         setMessage('Alerts on for this device.');
@@ -60,7 +64,7 @@ export default function OpsAlertsControl() {
         return;
       }
       setStatus('off');
-      setMessage('Could not enable alerts. Check VAPID and migration 0078.');
+      setMessage((prev) => prev ?? 'Could not enable alerts.');
     });
   }
 
