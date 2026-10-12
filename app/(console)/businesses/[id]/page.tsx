@@ -172,7 +172,14 @@ export default async function BusinessPage({
             </p>
           </div>
         </div>
-        <WhatsAppBadge whatsapp={business.whatsapp} />
+        <div className="ops-shop-hero-side">
+          <WhatsAppBadge whatsapp={business.whatsapp} />
+          <StickyIpBadge
+            configured={Boolean(business.whatsapp.proxyConfigured)}
+            host={business.whatsapp.proxyHost}
+            hasSession={detail.sessions.length > 0 || business.whatsapp.hasCreds || business.whatsapp.status != null}
+          />
+        </div>
       </header>
 
       {reasons.length > 0 ? (
@@ -438,10 +445,74 @@ function eventDetail(detail: unknown): string | null {
   return text || null;
 }
 
+function StickyIpBadge({
+  configured,
+  host,
+  hasSession,
+}: {
+  configured: boolean;
+  host: string | null | undefined;
+  hasSession: boolean;
+}) {
+  if (configured && host) {
+    return (
+      <span className="ops-sticky-badge is-on" title={host}>
+        Sticky IP · {host.replace(/^[^/]*\/\//, '')}
+      </span>
+    );
+  }
+  if (hasSession) {
+    return <span className="ops-sticky-badge is-off">Direct (no sticky IP)</span>;
+  }
+  return <span className="ops-sticky-badge">No WA session</span>;
+}
+
+function StickyIpPanel({
+  sessions,
+}: {
+  sessions: BusinessDetail['sessions'];
+}) {
+  const session = sessions[0];
+  const sticky = Boolean(session?.proxyConfigured && session.proxyHost);
+  return (
+    <section className="ops-sticky-panel" data-state={sticky ? 'on' : session ? 'off' : 'none'}>
+      <div className="ops-sticky-panel-top">
+        <h2>Sticky IP</h2>
+        <StickyIpBadge
+          configured={Boolean(session?.proxyConfigured)}
+          host={session?.proxyHost}
+          hasSession={Boolean(session)}
+        />
+      </div>
+      {sticky ? (
+        <>
+          <p className="ops-sticky-host phone">{session?.proxyHost}</p>
+          <p className="ops-group-note">
+            Fixed exit for this shop’s WhatsApp number. Survives pause and wipe; only clearing the proxy
+            frees it for another shop.
+          </p>
+        </>
+      ) : session ? (
+        <p className="ops-group-note">
+          Connecting without a sticky IP. With Webshare on the worker, the next connect claims an unused
+          IP automatically.
+        </p>
+      ) : (
+        <p className="ops-group-note">
+          Link WhatsApp once. An unused sticky IP is attached automatically on connect when Webshare is
+          configured.
+        </p>
+      )}
+    </section>
+  );
+}
+
 function WhatsAppTab({ detail, now }: TabProps) {
   const { sessions, connectionEvents, business } = detail;
   return (
     <>
+      <StickyIpPanel sessions={sessions} />
+
       <Panel title="Sessions" count={sessions.length}>
         {sessions.length === 0 ? (
           <Empty art="phone-link" title="Never linked">
@@ -458,6 +529,11 @@ function WhatsAppTab({ detail, now }: TabProps) {
                   <div className="ops-list-top">
                     <span className="phone ops-list-who">{formatPhone(session.phoneNumber)}</span>
                     <WhatsAppBadge whatsapp={session} />
+                    <StickyIpBadge
+                      configured={Boolean(session.proxyConfigured)}
+                      host={session.proxyHost}
+                      hasSession
+                    />
                     <span className="ops-lead-action">
                       <WhatsAppControl
                         businessId={business.id}

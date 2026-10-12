@@ -12,6 +12,10 @@ export type FleetWhatsApp = {
   lastSeenAt?: string | null;
   linkedAt?: string | null;
   stateSince?: string | null;
+  /** Fixed outbound proxy is set (credentials never exposed). */
+  proxyConfigured?: boolean;
+  /** Proxy host:port for operators — never username/password. */
+  proxyHost?: string | null;
 };
 
 export type FleetRow = {

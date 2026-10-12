@@ -136,6 +136,13 @@ function ShopCard({ shop, now }: { shop: FleetShop; now: number }) {
       <div className="ops-card-wa">
         <WhatsAppBadge whatsapp={shop.whatsapp} />
         <span className="ops-sub phone">{formatPhone(shop.whatsapp.phoneNumber) || '—'}</span>
+        {shop.whatsapp.proxyConfigured && shop.whatsapp.proxyHost ? (
+          <span className="ops-sticky-badge is-on">
+            Sticky · {shop.whatsapp.proxyHost.replace(/^[^/]*\/\//, '')}
+          </span>
+        ) : shop.whatsapp.status || shop.whatsapp.hasCreds ? (
+          <span className="ops-sticky-badge is-off">Direct</span>
+        ) : null}
       </div>
       <dl className="ops-card-stats">
         <div>
@@ -372,6 +379,13 @@ export default function FleetTable({
                     <td>
                       <WhatsAppBadge whatsapp={shop.whatsapp} />
                       <div className="ops-sub phone">{formatPhone(shop.whatsapp.phoneNumber)}</div>
+                      {shop.whatsapp.proxyConfigured && shop.whatsapp.proxyHost ? (
+                        <div className="ops-sticky-badge is-on" title={shop.whatsapp.proxyHost}>
+                          Sticky · {shop.whatsapp.proxyHost.replace(/^[^/]*\/\//, '')}
+                        </div>
+                      ) : shop.whatsapp.status || shop.whatsapp.hasCreds ? (
+                        <div className="ops-sticky-badge is-off">Direct</div>
+                      ) : null}
                     </td>
                     <td className="ops-right">
                       <span className="num ops-strong">{shop.inbound24h}</span>
