@@ -81,6 +81,26 @@ export type FleetMetrics = {
 
 export type AdminMe = { userId: string; role: 'operator' | 'owner' };
 
+export type ShopSubscription = {
+  status: string;
+  planCode: string;
+  currentPeriodStart: string;
+  currentPeriodEnd: string | null;
+  graceEndsAt: string | null;
+  aiOverride: string;
+  aiOverrideReason: string | null;
+  aiOverrideUntil: string | null;
+  updatedAt: string;
+};
+
+export type FeatureOverride = {
+  feature: string;
+  enabled: boolean;
+  reason: string | null;
+  until: string | null;
+  scope: 'global' | 'shop';
+};
+
 export type BusinessDetail = {
   business: FleetRow;
   members: { email: string | null; role: string; joinedAt: string; lastSignInAt: string | null }[];
@@ -100,6 +120,8 @@ export type BusinessDetail = {
   usage: { feature: string; lastAt: string | null; last7d: number; last30d: number }[];
   outcomes: { conversations30d: number; handoffs30d: number; handoffsOpen: number; takeovers30d: number };
   connectionEvents: { id: string; event: string; detail: unknown; occurredAt: string }[];
+  subscription?: ShopSubscription | null;
+  featureOverrides?: FeatureOverride[];
   generatedAt: string;
 };
 
@@ -197,9 +219,12 @@ export type ModelPrice = {
   priceMicrosPerUnit: number;
   effectiveFrom: string;
   sourceNote: string | null;
+  builtIn?: boolean;
 };
 
 export type PricesResponse = { prices: ModelPrice[]; generatedAt: string };
+
+export type WaitlistStatus = 'pending' | 'approved' | 'rejected' | 'converted';
 
 export type WaitlistEntry = {
   id: string;
@@ -208,13 +233,86 @@ export type WaitlistEntry = {
   sells: string | null;
   lang: 'en' | 'fr';
   createdAt: string;
+  status?: WaitlistStatus;
+  opsNote?: string | null;
+  reviewedAt?: string | null;
+  convertedBusinessId?: string | null;
 };
 
 export type WaitlistResponse = {
   entries: WaitlistEntry[];
   total: number;
-  summary: { total: number; last7d: number; last30d: number; fr: number; en: number };
+  summary: {
+    total: number;
+    last7d: number;
+    last30d: number;
+    fr: number;
+    en: number;
+    pending?: number;
+    approved?: number;
+    rejected?: number;
+    converted?: number;
+  };
   page: number;
   pageSize: number;
   generatedAt: string;
+};
+
+export type PlatformShopRef = { id: string; name: string };
+
+export type PlatformStorm = {
+  shops: number;
+  events: number;
+  samples: PlatformShopRef[];
+};
+
+export type PlatformHealth = {
+  generatedAt: string;
+  verdict: 'ok' | 'watch' | 'sick';
+  reasons: string[];
+  worker: {
+    uptimeSec: number;
+    node: string;
+    database: 'ok' | 'unreachable';
+    railway: {
+      deploymentId: string | null;
+      commitSha: string | null;
+      environment: string | null;
+      serviceName: string | null;
+    };
+    liveSessions: {
+      total: number;
+      connected: number;
+      pairing: number;
+      other: number;
+    };
+    notes: string[];
+  };
+  snapshot: {
+    whatsapp: {
+      shops: number;
+      linked: number;
+      live: number;
+      down: number;
+      banned: number;
+      pairing: number;
+      notLinked: number;
+      storms: {
+        banRisk24h: PlatformStorm;
+        reconnecting24h: PlatformStorm;
+        reconnectAttempts1h: PlatformStorm;
+      };
+    };
+    messages: { stuck: number; failed24h: number; pending: number };
+    costs: {
+      todayMicros: number;
+      avgDay7Micros: number;
+      ratio: number | null;
+      hotShops: Array<PlatformShopRef & { todayMicros: number; avgDayMicros: number; ratio: number | null }>;
+      allowanceNear: Array<
+        PlatformShopRef & { share: number; periodCostMicros: number; allowanceMicros: number }
+      >;
+    };
+    jobs: { byKind24h: Array<{ kind: string; count: number; shops: number }> };
+  };
 };

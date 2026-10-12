@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Art3D, type Art3DName, BrandMark, BrandWordmark } from '../brand';
 import SignOutButton from '../sign-out-button';
 
@@ -20,51 +20,56 @@ export default function ConsoleShell({
   children: ReactNode;
 }) {
   const pathname = usePathname() ?? '/';
-  const view = useSearchParams()?.get('view');
   const roleLabel = role === 'owner' ? 'Owner' : 'Operator';
 
   const nav: NavItem[] = [
     {
       href: '/',
-      label: 'Shops',
-      art: 'store',
-      active: (pathname === '/' && view !== 'attention') || pathname.startsWith('/businesses/'),
-    },
-    {
-      href: '/?view=attention',
-      label: 'Needs attention',
-      art: 'bell',
-      active: pathname === '/' && view === 'attention',
+      label: 'Attention',
+      art: 'attention',
+      active: pathname === '/',
       count: attentionCount,
     },
     {
-      href: '/metrics',
-      label: 'Metrics',
-      art: 'analytics',
-      active: pathname.startsWith('/metrics'),
+      href: '/shops',
+      label: 'Shops',
+      art: 'shops',
+      active: pathname === '/shops' || pathname.startsWith('/businesses/'),
     },
     {
       href: '/waitlist',
       label: 'Waitlist',
-      art: 'contacts',
+      art: 'waitlist',
       active: pathname.startsWith('/waitlist'),
     },
     {
       href: '/costs',
-      label: 'AI costs',
-      art: 'sale',
+      label: 'Costs',
+      art: 'costs',
       active: pathname.startsWith('/costs'),
+    },
+    {
+      href: '/flags',
+      label: 'Flags',
+      art: 'flags',
+      active: pathname.startsWith('/flags'),
     },
     {
       href: '/incidents',
       label: 'Incidents',
-      art: 'status',
+      art: 'incidents',
       active: pathname.startsWith('/incidents'),
     },
     {
+      href: '/platform',
+      label: 'Platform',
+      art: 'platform',
+      active: pathname.startsWith('/platform'),
+    },
+    {
       href: '/audit',
-      label: 'Audit log',
-      art: 'key',
+      label: 'Audit',
+      art: 'audit',
       active: pathname.startsWith('/audit'),
     },
   ];
@@ -72,12 +77,12 @@ export default function ConsoleShell({
   return (
     <div className="app">
       <aside className="app-sidebar" aria-label="Main">
-        <Link href="/" className="app-brand" aria-label="OmniChat Ops, all shops">
+        <Link href="/" className="app-brand" aria-label="OmniChat Ops, needs attention">
           <BrandWordmark height={30} tagline="Operator console" />
         </Link>
         <div className="app-shop-card">
           <div className="app-shop-card-link">
-            <Art3D name="key" size={40} priority />
+            <Art3D name="audit" size={40} priority />
             <span className="app-shop-card-text">
               <span className="app-brand-name">{roleLabel}</span>
               <span className="ops-identity">{email ?? 'Signed in'}</span>

@@ -3,6 +3,7 @@
 import { type FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PRICE_UNITS, formatUnitPrice, priceUnitInfo } from '../../../../lib/format';
+import { useCanMutate } from '../../../../lib/ops-role';
 import { Loader2 } from '../../../../lib/icons';
 import { addModelPrice } from './actions';
 
@@ -16,6 +17,7 @@ function today(): string {
  */
 export default function PriceForm({ provider: initialProvider, model: initialModel }: { provider: string; model: string }) {
   const router = useRouter();
+  const canMutate = useCanMutate();
   const requestId = useRef<string | null>(null);
   const [provider, setProvider] = useState(initialProvider);
   const [model, setModel] = useState(initialModel);
@@ -32,6 +34,14 @@ export default function PriceForm({ provider: initialProvider, model: initialMod
   const amount = Number(usd);
   const microsPerUnit = usd.trim() !== '' && Number.isFinite(amount) && amount >= 0 ? (amount * 1_000_000) / info.per : null;
   const ready = provider.trim() && model.trim() && microsPerUnit !== null && from && reason.trim().length >= 3;
+
+  if (!canMutate) {
+    return (
+      <p className="ops-group-note" role="status">
+        Model prices are owner-only. Operators can view the table above.
+      </p>
+    );
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

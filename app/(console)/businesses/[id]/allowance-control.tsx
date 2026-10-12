@@ -2,6 +2,7 @@
 
 import { type FormEvent, useId, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCanMutate } from '../../../../lib/ops-role';
 import { Loader2 } from '../../../../lib/icons';
 import { setAllowance } from './actions';
 
@@ -31,6 +32,7 @@ export default function AllowanceControl({
   bonusMicros: number;
 }) {
   const router = useRouter();
+  const canMutate = useCanMutate();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const [requestId, setRequestId] = useState('');
@@ -45,6 +47,15 @@ export default function AllowanceControl({
   const trimmed = reason.trim();
   const unchanged = allowanceValue === allowanceMicros && bonusValue === bonusMicros;
   const valid = allowanceValue !== null && bonusValue !== null && trimmed.length >= 3 && !unchanged;
+
+  if (!canMutate) {
+    return (
+      <button type="button" className="sm" disabled title="Owner only">
+        {allowanceMicros > 0 ? 'Change allowance' : 'Set allowance'}
+        <span className="ops-group-note">Owner only</span>
+      </button>
+    );
+  }
 
   function open() {
     setRequestId(crypto.randomUUID());

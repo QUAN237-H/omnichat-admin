@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { attentionReasons } from '../../lib/attention';
+import { attentionReasons, whatsappHealth } from '../../lib/attention';
 import { formatPercent, formatPhone, formatUsd, formatXaf, timeAgo } from '../../lib/format';
 import { LayoutGrid, LayoutList, Search, X } from '../../lib/icons';
 import type { FleetAi, FleetShop } from '../../lib/types';
@@ -96,12 +96,25 @@ function ShopAvatar({ shop, size = 36 }: { shop: FleetShop; size?: number }) {
   );
 }
 
+function shopCockpitHref(shop: FleetShop): string {
+  const health = whatsappHealth(shop.whatsapp);
+  if (health === 'banned' || health === 'logged_out' || health === 'offline' || health === 'pairing') {
+    return `/businesses/${shop.id}?tab=whatsapp`;
+  }
+  if (shop.stuck > 0 || shop.failed24h > 0) return `/businesses/${shop.id}?tab=reliability`;
+  const allowance = (shop.ai?.allowanceMicros ?? 0) + (shop.ai?.bonusMicros ?? 0);
+  if (shop.ai && allowance > 0 && shop.ai.periodCostMicros / allowance >= 0.8) {
+    return `/businesses/${shop.id}?tab=money`;
+  }
+  return `/businesses/${shop.id}`;
+}
+
 function ShopCard({ shop, now }: { shop: FleetShop; now: number }) {
   const reasons = attentionReasons(shop);
   const problems = shop.failed24h + shop.stuck;
   const trouble = problems > 0 || reasons.length > 0;
   return (
-    <Link href={`/businesses/${shop.id}`} className="ops-card" data-trouble={trouble || undefined}>
+    <Link href={shopCockpitHref(shop)} className="ops-card" data-trouble={trouble || undefined}>
       <div className="ops-card-head">
         <ShopAvatar shop={shop} size={44} />
         <div className="ops-shop-text">
@@ -166,7 +179,9 @@ export default function FleetTable({
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [layout, setLayout] = useState<LayoutMode>('table');
-  const [sort, setSort] = useState<{ key: SortKey; desc: boolean }>({ key: 'createdAt', desc: true });
+  const [sort, setSort] = useState<{ key: SortKey; desc: boolean }>(() =>
+    view === 'attention' ? { key: 'problems', desc: true } : { key: 'createdAt', desc: true },
+  );
   const [page, setPage] = useState(0);
   const now = Date.parse(generatedAt);
 
@@ -209,16 +224,20 @@ export default function FleetTable({
     <section className="ops-panel">
       <div className="ops-toolbar">
         <div className="ops-seg" role="group" aria-label="Filter shops">
-          <Link href="/" className={view === 'all' ? 'ops-seg-btn is-active' : 'ops-seg-btn'} aria-current={view === 'all' ? 'page' : undefined}>
-            All <span className="ops-seg-count">{totalCount}</span>
-          </Link>
           <Link
-            href="/?view=attention"
+            href="/"
             className={view === 'attention' ? 'ops-seg-btn is-active' : 'ops-seg-btn'}
             aria-current={view === 'attention' ? 'page' : undefined}
             data-warn={attentionCount > 0 || undefined}
           >
-            Needs attention <span className="ops-seg-count">{attentionCount}</span>
+            Attention <span className="ops-seg-count">{attentionCount}</span>
+          </Link>
+          <Link
+            href="/shops"
+            className={view === 'all' ? 'ops-seg-btn is-active' : 'ops-seg-btn'}
+            aria-current={view === 'all' ? 'page' : undefined}
+          >
+            All shops <span className="ops-seg-count">{totalCount}</span>
           </Link>
         </div>
         <div className="ops-toolbar-end">
@@ -324,11 +343,11 @@ export default function FleetTable({
                     key={shop.id}
                     className="ops-row"
                     data-trouble={problems > 0 || reasons.length > 0 || undefined}
-                    onClick={() => router.push(`/businesses/${shop.id}`)}
+                    onClick={() => router.push(shopCockpitHref(shop))}
                   >
                     <td className="ops-col-shop">
                       <Link
-                        href={`/businesses/${shop.id}`}
+                        href={shopCockpitHref(shop)}
                         className="ops-shop"
                         onClick={(event) => event.stopPropagation()}
                       >

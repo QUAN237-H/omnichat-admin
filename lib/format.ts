@@ -97,6 +97,21 @@ const FEATURE_LABEL: Record<string, string> = {
 const AUDIT_ACTION_LABEL: Record<string, string> = {
   'whatsapp.pause': 'Paused WhatsApp',
   'whatsapp.resume': 'Resumed WhatsApp',
+  'ai.pause': 'Paused AI replies',
+  'ai.resume': 'Resumed AI replies',
+  'ai.force_on': 'Forced AI on',
+  'subscription.patch': 'Changed subscription',
+  'usage.allowance': 'Set AI allowance',
+  'flag.global': 'Changed global flag',
+  'flag.shop': 'Changed shop flag',
+  'waitlist.pending': 'Waitlist → pending',
+  'waitlist.approved': 'Waitlist approved',
+  'waitlist.rejected': 'Waitlist rejected',
+  'waitlist.converted': 'Waitlist converted',
+  'waitlist.note': 'Waitlist note',
+  'pricing.add': 'Added model price',
+  'impersonation.start': 'Started Desk support view',
+  'impersonation.end': 'Ended Desk support view',
 };
 
 export function auditActionLabel(action: string): string {

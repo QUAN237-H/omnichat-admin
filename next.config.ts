@@ -1,7 +1,14 @@
+import { join } from 'node:path';
 import type { NextConfig } from 'next';
+
+// The console imports the owner desk's stylesheets (dashboard/app/styles) so the
+// two apps share one design system; Turbopack only reads files under its root.
+const repoRoot = join(__dirname, '..');
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  turbopack: { root: repoRoot },
+  outputFileTracingRoot: repoRoot,
   async headers() {
     return [
       {

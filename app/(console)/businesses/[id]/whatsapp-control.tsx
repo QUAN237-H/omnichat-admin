@@ -2,6 +2,7 @@
 
 import { type FormEvent, useId, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCanMutate } from '../../../../lib/ops-role';
 import { Loader2, Pause, Play } from '../../../../lib/icons';
 import { runWhatsAppControl } from './actions';
 
@@ -24,6 +25,7 @@ export default function WhatsAppControl({
   hasCreds: boolean;
 }) {
   const router = useRouter();
+  const canMutate = useCanMutate();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const [requestId, setRequestId] = useState('');
@@ -36,6 +38,16 @@ export default function WhatsAppControl({
 
   if (!control) {
     return <span className="ops-group-note">{hasCreds ? 'Needs the owner to re-pair' : 'Owner must link again'}</span>;
+  }
+
+  if (!canMutate) {
+    return (
+      <button type="button" className="sm" disabled title="Owner only">
+        {control === 'pause' ? <Pause size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
+        {control === 'pause' ? 'Pause' : 'Resume'}
+        <span className="ops-group-note">Owner only</span>
+      </button>
+    );
   }
 
   const isPause = control === 'pause';

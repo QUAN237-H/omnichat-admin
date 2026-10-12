@@ -733,6 +733,31 @@ button.ops-pager-page[data-active]:hover:not(:disabled) {
   line-height: 1.45;
 }
 
+.ops-alert[data-tone='ok'] {
+  border-color: color-mix(in srgb, var(--success, #16a34a) 28%, var(--border));
+  background: color-mix(in srgb, var(--success, #16a34a) 10%, var(--surface));
+}
+
+.ops-alert[data-tone='ok'] .ops-alert-mark {
+  background: color-mix(in srgb, var(--success, #16a34a) 16%, var(--surface));
+  color: var(--success, #16a34a);
+}
+
+.ops-alert[data-tone='warning'] {
+  background: color-mix(in srgb, var(--warn, #d97706) 12%, var(--surface));
+  border-color: color-mix(in srgb, var(--warn, #d97706) 35%, var(--border));
+}
+
+.ops-alert[data-tone='warning'] .ops-alert-mark {
+  background: color-mix(in srgb, var(--warn, #d97706) 16%, var(--surface));
+  color: var(--warn, #d97706);
+}
+
+.ops-alert[data-tone='danger'] {
+  background: color-mix(in srgb, var(--danger, #dc2626) 12%, var(--surface));
+  border-color: color-mix(in srgb, var(--danger, #dc2626) 35%, var(--border));
+}
+
 .ops-alert-mark {
   display: grid;
   place-items: center;

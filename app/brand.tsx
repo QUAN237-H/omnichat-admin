@@ -1,8 +1,20 @@
 import type { CSSProperties } from 'react';
 import Image from 'next/image';
 
-/** The clay icons copied from dashboard/public/brand/3d. */
+/** Unique ops-console clay icons (not the owner Desk set). */
+export type OpsArtName =
+  | 'attention'
+  | 'shops'
+  | 'waitlist'
+  | 'costs'
+  | 'flags'
+  | 'incidents'
+  | 'platform'
+  | 'audit';
+
+/** Legacy Desk clay names still used on empty states / older panels. */
 export type Art3DName =
+  | OpsArtName
   | 'analytics'
   | 'assistant'
   | 'bell'
@@ -19,7 +31,18 @@ export type Art3DName =
   | 'status'
   | 'store';
 
-/** Glossy clay icon, same component as the owner desk. */
+const OPS_ART = new Set<string>([
+  'attention',
+  'shops',
+  'waitlist',
+  'costs',
+  'flags',
+  'incidents',
+  'platform',
+  'audit',
+]);
+
+/** Glossy clay icon — ops set lives under /brand/ops, Desk leftovers under /brand/3d. */
 export function Art3D({
   name,
   size = 48,
@@ -31,9 +54,10 @@ export function Art3D({
   className?: string;
   priority?: boolean;
 }) {
+  const src = OPS_ART.has(name) ? `/brand/ops/${name}.webp` : `/brand/3d/${name}.webp`;
   return (
     <Image
-      src={`/brand/3d/${name}.webp`}
+      src={src}
       width={size}
       height={size}
       alt=""

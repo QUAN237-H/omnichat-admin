@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { formatDate, incidentDetail, incidentKindLabel, timeAgo } from '../../../lib/format';
+import { incidentShopHref } from '../../../lib/incidentHref';
 import type { Incident, IncidentSeverity } from '../../../lib/types';
 
 const SEVERITY: Record<IncidentSeverity, { label: string; className: string }> = {
@@ -43,7 +44,7 @@ export default function IncidentTable({
                 {showShop ? (
                   <td>
                     {incident.businessId ? (
-                      <Link href={`/businesses/${incident.businessId}?tab=reliability`}>
+                      <Link href={incidentShopHref(incident.businessId, incident.kind)}>
                         {incident.businessName ?? 'Deleted shop'}
                       </Link>
                     ) : (

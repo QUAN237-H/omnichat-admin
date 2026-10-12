@@ -4,7 +4,6 @@ import { formatDate, formatUnitPrice, priceUnitInfo } from '../../../../lib/form
 import { ArrowLeft } from '../../../../lib/icons';
 import type { FleetUsageResponse, PricesResponse } from '../../../../lib/types';
 import { workerGet } from '../../../../lib/worker';
-import { Art3D } from '../../../brand';
 import { StatePanel } from '../../../state-screen';
 import PriceForm from './price-form';
 
@@ -40,9 +39,8 @@ export default async function PricesPage({
         <div>
           <h1>Model prices</h1>
           <p>
-            The only source of cost estimates: the worker never has prices in its code. Enter list prices from each
-            provider&apos;s pricing page, one row per thing they charge for. A new row with a later date replaces the old
-            price from that date.
+            Built-in list prices cover every model Omni uses, so Costs works with an empty table. Add a row only to
+            override a rate (same provider, model, and unit). Overrides apply from their start date forward.
           </p>
         </div>
       </header>
@@ -94,43 +92,36 @@ export default async function PricesPage({
           <h2>Prices</h2>
           <span className="desk-group-count">{rows.length}</span>
         </div>
-        {rows.length === 0 ? (
-          <div className="desk-list">
-            <div className="empty-state">
-              <Art3D name="sale" size={72} />
-              <p className="empty-title">No prices yet</p>
-              <p>Until a model has a price, its calls are counted but cost nothing in the estimates.</p>
-            </div>
-          </div>
-        ) : (
-          <div className="import-table-wrap ops-table-wrap">
-            <table className="import-table ops-table">
-              <thead>
-                <tr>
-                  <th>Model</th>
-                  <th>Charged for</th>
-                  <th className="ops-right">Price</th>
-                  <th>From</th>
-                  <th>Source</th>
+        <div className="import-table-wrap ops-table-wrap">
+          <table className="import-table ops-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Charged for</th>
+                <th className="ops-right">Price</th>
+                <th>From</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    <span className="ops-shop-name">{row.model}</span>
+                    <div className="ops-sub">
+                      {row.provider}
+                      {row.builtIn ? ' · built-in' : ' · override'}
+                    </div>
+                  </td>
+                  <td>{priceUnitInfo(row.unit).label}</td>
+                  <td className="ops-right num">{formatUnitPrice(row.unit, row.priceMicrosPerUnit)}</td>
+                  <td className="ops-muted">{formatDate(row.effectiveFrom)}</td>
+                  <td className="ops-muted">{row.sourceNote ?? '—'}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {rows.map((row) => (
-                  <tr key={row.id}>
-                    <td>
-                      <span className="ops-shop-name">{row.model}</span>
-                      <div className="ops-sub">{row.provider}</div>
-                    </td>
-                    <td>{priceUnitInfo(row.unit).label}</td>
-                    <td className="ops-right num">{formatUnitPrice(row.unit, row.priceMicrosPerUnit)}</td>
-                    <td className="ops-muted">{formatDate(row.effectiveFrom)}</td>
-                    <td className="ops-muted">{row.sourceNote ?? '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </main>
   );

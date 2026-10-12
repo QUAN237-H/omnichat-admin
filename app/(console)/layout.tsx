@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { needsAttention } from '../../lib/attention';
+import { OpsRoleProvider } from '../../lib/ops-role';
 import { createServerSupabase } from '../../lib/supabase/server';
 import type { AdminMe, FleetResponse } from '../../lib/types';
 import { workerGet } from '../../lib/worker';
@@ -21,8 +22,10 @@ export default async function ConsoleLayout({ children }: { children: ReactNode 
   const email = claims.data?.claims.email;
 
   return (
-    <ConsoleShell role={me.data.role} email={typeof email === 'string' ? email : null} attentionCount={attentionCount}>
-      {children}
-    </ConsoleShell>
+    <OpsRoleProvider role={me.data.role}>
+      <ConsoleShell role={me.data.role} email={typeof email === 'string' ? email : null} attentionCount={attentionCount}>
+        {children}
+      </ConsoleShell>
+    </OpsRoleProvider>
   );
 }

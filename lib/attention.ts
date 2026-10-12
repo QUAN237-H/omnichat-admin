@@ -1,7 +1,9 @@
-import type { FleetRow, FleetWhatsApp } from './types';
+import type { FleetAi, FleetRow, FleetShop, FleetWhatsApp } from './types';
 
 /** Same thresholds as the monitor service (admin/monitor/src/rules.ts). */
 const HEARTBEAT_STALE_MS = 5 * 60_000;
+/** Period spend at or above this share of allowance → triage. */
+const ALLOWANCE_BURN_SHARE = 0.8;
 
 export type WhatsAppHealth = 'live' | 'offline' | 'banned' | 'logged_out' | 'paused' | 'pairing' | 'not_linked';
 
@@ -29,8 +31,20 @@ export function formatDuration(fromIso: string, now = Date.now()): string {
   return `${Math.floor(hours / 24)} days`;
 }
 
-/** Why a shop needs an operator now; empty means it is healthy. */
-export function attentionReasons(shop: FleetRow): string[] {
+function allowanceBurnReason(ai: FleetAi | null | undefined): string | null {
+  if (!ai) return null;
+  const allowance = ai.allowanceMicros + ai.bonusMicros;
+  if (allowance <= 0) return null;
+  const share = ai.periodCostMicros / allowance;
+  if (share < ALLOWANCE_BURN_SHARE) return null;
+  return share >= 0.95 ? 'AI allowance exhausted' : 'AI allowance nearly used';
+}
+
+/**
+ * Soft status lines for a shop (includes “never linked”).
+ * Prefer {@link triageReasons} for the Needs attention home.
+ */
+export function attentionReasons(shop: FleetRow & { ai?: FleetAi | null }): string[] {
   const reasons: string[] = [];
   const health = whatsappHealth(shop.whatsapp);
   const since = downSince(shop.whatsapp);
@@ -42,11 +56,20 @@ export function attentionReasons(shop: FleetRow): string[] {
   else if (health === 'pairing') reasons.push('WhatsApp not connected');
   if (shop.stuck > 0) reasons.push(`${shop.stuck} stuck ${shop.stuck === 1 ? 'message' : 'messages'}`);
   if (shop.failed24h > 0) reasons.push(`${shop.failed24h} failed today`);
+  const burn = allowanceBurnReason(shop.ai);
+  if (burn) reasons.push(burn);
   return reasons;
 }
 
-export function needsAttention(shop: FleetRow): boolean {
-  return attentionReasons(shop).length > 0;
+/**
+ * Actionable triage only — excludes “never linked” so new signups do not flood the home queue.
+ */
+export function triageReasons(shop: FleetShop): string[] {
+  return attentionReasons(shop).filter((reason) => reason !== 'WhatsApp never linked');
+}
+
+export function needsAttention(shop: FleetShop): boolean {
+  return triageReasons(shop).length > 0;
 }
 
 /** Several numbers down at once points at the worker, its IP or WhatsApp, not one phone. */

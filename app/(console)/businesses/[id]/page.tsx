@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { attentionReasons } from '../../../../lib/attention';
+import { attentionReasons, whatsappHealth } from '../../../../lib/attention';
 import {
   STAGE_LABEL,
   STAGE_ORDER,
@@ -30,9 +30,14 @@ import {
   UsageStats,
 } from '../../costs/usage-tables';
 import AllowanceControl from './allowance-control';
+import AiControl from './ai-control';
 import { WINDOWS, windowDays } from '../../costs/windows';
 import IncidentTable from '../../incidents/incident-table';
+import type { ImpersonationSession } from './actions';
 import FailuresTable from './failures-table';
+import ImpersonateControl from './impersonate-control';
+import ShopFlags from './shop-flags';
+import SubscriptionControl from './subscription-control';
 import TrafficChart from './traffic-chart';
 import WhatsAppControl from './whatsapp-control';
 
@@ -43,15 +48,16 @@ const CLOSED_STAGES = new Set(['PURCHASED', 'LOST', 'NO_SHOW']);
 const TABS = [
   { id: 'overview', label: 'Overview' },
   { id: 'whatsapp', label: 'WhatsApp' },
+  { id: 'money', label: 'AI & money' },
   { id: 'reliability', label: 'Reliability' },
-  { id: 'usage', label: 'Usage' },
-  { id: 'outcomes', label: 'Outcomes' },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
 
-function isTab(value: string | undefined): value is TabId {
-  return TABS.some((tab) => tab.id === value);
+/** Map retired tab ids so old bookmarks still land somewhere useful. */
+function resolveTab(value: string | undefined): TabId {
+  if (value === 'usage' || value === 'outcomes') return value === 'usage' ? 'money' : 'overview';
+  return TABS.some((tab) => tab.id === value) ? (value as TabId) : 'overview';
 }
 
 function initials(name: string): string {
@@ -109,10 +115,13 @@ export default async function BusinessPage({
 }) {
   const { id } = await params;
   const { tab: requestedTab, days: requestedDays } = await searchParams;
-  const tab: TabId = isTab(requestedTab) ? requestedTab : 'overview';
+  const tab = resolveTab(requestedTab);
   const days = windowDays(requestedDays);
 
-  const result = await workerGet<BusinessDetail>(`/admin/businesses/${encodeURIComponent(id)}`);
+  const [result, impersonation] = await Promise.all([
+    workerGet<BusinessDetail>(`/admin/businesses/${encodeURIComponent(id)}`),
+    workerGet<{ session: ImpersonationSession | null; deskUrl: string }>('/admin/impersonation/active'),
+  ]);
   if (!result.ok) {
     if (result.status === 404 || result.status === 400) notFound();
     return <StatePanel status={result.status} error={result.error} code={result.code} />;
@@ -120,8 +129,18 @@ export default async function BusinessPage({
 
   const detail = result.data;
   const { business } = detail;
+  const activeSession = impersonation.ok ? impersonation.data.session : null;
+  const deskUrl = impersonation.ok ? impersonation.data.deskUrl : '';
   const now = Date.parse(detail.generatedAt);
   const reasons = attentionReasons(business);
+  const health = whatsappHealth(business.whatsapp);
+  const fromTriage =
+    health === 'banned' ||
+    health === 'logged_out' ||
+    health === 'offline' ||
+    health === 'pairing' ||
+    business.stuck > 0 ||
+    business.failed24h > 0;
   const failedCount = detail.reliability.reduce((sum, row) => sum + row.failed7d, 0);
   const stuckCount = detail.reliability.reduce((sum, row) => sum + row.stuck, 0);
   const tabCount: Partial<Record<TabId, number>> = {
@@ -131,9 +150,9 @@ export default async function BusinessPage({
 
   return (
     <main className="ops-page">
-      <Link href="/" className="ops-back">
+      <Link href={fromTriage ? '/' : '/shops'} className="ops-back">
         <ArrowLeft size={16} aria-hidden="true" />
-        All shops
+        {fromTriage ? 'Needs attention' : 'All shops'}
       </Link>
 
       <header className="ops-shop-hero">
@@ -182,11 +201,17 @@ export default async function BusinessPage({
       </nav>
 
       <div className="ops-section">
-        {tab === 'overview' ? <OverviewTab detail={detail} now={now} /> : null}
+        {tab === 'overview' ? (
+          <OverviewTab
+            detail={detail}
+            now={now}
+            activeSession={activeSession}
+            deskUrl={deskUrl}
+          />
+        ) : null}
         {tab === 'whatsapp' ? <WhatsAppTab detail={detail} now={now} /> : null}
+        {tab === 'money' ? <MoneyTab detail={detail} now={now} days={days} /> : null}
         {tab === 'reliability' ? <ReliabilityTab detail={detail} now={now} /> : null}
-        {tab === 'usage' ? <UsageTab detail={detail} now={now} days={days} /> : null}
-        {tab === 'outcomes' ? <OutcomesTab detail={detail} /> : null}
       </div>
     </main>
   );
@@ -194,7 +219,12 @@ export default async function BusinessPage({
 
 type TabProps = { detail: BusinessDetail; now: number };
 
-function OverviewTab({ detail, now }: TabProps) {
+function OverviewTab({
+  detail,
+  now,
+  activeSession,
+  deskUrl,
+}: TabProps & { activeSession: ImpersonationSession | null; deskUrl: string }) {
   const { business, members, conversations, traffic } = detail;
   const ownerLastSignIn = members
     .map((member) => member.lastSignInAt)
@@ -278,6 +308,21 @@ function OverviewTab({ detail, now }: TabProps) {
               ))}
             </ul>
           </Panel>
+
+          <Panel title="Support view" note="20 min · keep your own sign-in" bodyClassName="ops-panel-body pad">
+            <div style={{ display: 'grid', gap: 10 }}>
+              <p className="ops-muted" style={{ margin: 0 }}>
+                Open the owner Desk for this shop to see what they see. Reason required; banner stays until you end the
+                session.
+              </p>
+              <ImpersonateControl
+                businessId={business.id}
+                businessName={business.name}
+                active={activeSession}
+                deskUrl={deskUrl}
+              />
+            </div>
+          </Panel>
         </div>
 
         <div className="ops-section">
@@ -298,18 +343,20 @@ function OverviewTab({ detail, now }: TabProps) {
             </div>
           </Panel>
 
-          <AiEmployeePanel businessId={business.id} businessName={business.name} />
+          <AiEmployeeSummary businessId={business.id} />
         </div>
       </div>
+
+      <OutcomesTab detail={detail} />
     </>
   );
 }
 
-/** Spec §20.2 Business panel: allowance, used and remaining for the open period. */
-async function AiEmployeePanel({ businessId, businessName }: { businessId: string; businessName: string }) {
+/** Read-only meter on Overview — mutations live on AI & money. */
+async function AiEmployeeSummary({ businessId }: { businessId: string }) {
   const result = await workerGet<ShopUsageResponse>(`/admin/businesses/${businessId}/usage?days=1`);
   return (
-    <Panel title="AI employee" link={{ href: `/businesses/${businessId}?tab=usage`, label: 'Cost details' }}>
+    <Panel title="AI employee" link={{ href: `/businesses/${businessId}?tab=money`, label: 'AI & money' }}>
       {!result.ok ? (
         <Empty art="analytics" title="AI usage unavailable">
           {result.error}
@@ -320,12 +367,7 @@ async function AiEmployeePanel({ businessId, businessName }: { businessId: strin
         </Empty>
       ) : (
         <div className="ops-panel-body pad">
-          <AllowanceMeter
-            businessId={businessId}
-            businessName={businessName}
-            period={result.data.period}
-            spentToday={result.data.totals.costMicros}
-          />
+          <AllowanceMeter period={result.data.period} spentToday={result.data.totals.costMicros} />
         </div>
       )}
     </Panel>
@@ -333,15 +375,13 @@ async function AiEmployeePanel({ businessId, businessName }: { businessId: strin
 }
 
 function AllowanceMeter({
-  businessId,
-  businessName,
   period,
   spentToday,
+  control,
 }: {
-  businessId: string;
-  businessName: string;
   period: NonNullable<ShopUsageResponse['period']>;
   spentToday: number;
+  control?: ReactNode;
 }) {
   const allowance = period.allowanceMicros + period.bonusMicros;
   const share = allowance > 0 ? period.costMicros / allowance : null;
@@ -362,16 +402,9 @@ function AllowanceMeter({
           Since {formatDate(period.startedAt)} · {formatUsd(spentToday)} in the last 24 h
           {period.bonusMicros > 0 ? ` · includes a ${formatUsd(period.bonusMicros)} bonus` : ''}
         </span>
-        <AllowanceControl
-          businessId={businessId}
-          businessName={businessName}
-          allowanceMicros={period.allowanceMicros}
-          bonusMicros={period.bonusMicros}
-        />
+        {control}
       </div>
-      <p className="ops-group-note mt-0">
-        Estimated cost, not enforced yet. Subscription status and pausing the AI arrive with Phase 2.
-      </p>
+      <p className="ops-group-note mt-0">Estimated cost from built-in (or overridden) model prices.</p>
     </div>
   );
 }
@@ -565,10 +598,89 @@ async function ShopAiReliability({ businessId }: { businessId: string }) {
   );
 }
 
-function UsageTab({ detail, now, days }: TabProps & { days: number }) {
-  const { usage } = detail;
+async function MoneyTab({ detail, now, days }: TabProps & { days: number }) {
+  const { usage, business, subscription, featureOverrides = [] } = detail;
+  const periodResult = await workerGet<ShopUsageResponse>(`/admin/businesses/${business.id}/usage?days=1`);
   return (
     <>
+      <Panel title="AI replies">
+        <div className="ops-panel-body pad" style={{ display: 'grid', gap: 12 }}>
+          <p className="ops-group-note mt-0">
+            {subscription
+              ? `Override: ${subscription.aiOverride}${subscription.aiOverrideReason ? ` — ${subscription.aiOverrideReason}` : ''}`
+              : 'No subscription row (migration 0071).'}
+          </p>
+          {subscription ? (
+            <AiControl
+              businessId={business.id}
+              businessName={business.name}
+              aiOverride={subscription.aiOverride}
+            />
+          ) : null}
+        </div>
+      </Panel>
+
+      <Panel title="Subscription">
+        {!subscription ? (
+          <Empty art="key" title="No subscription">
+            Apply migration 0071 so ops can extend periods and grace.
+          </Empty>
+        ) : (
+          <div className="ops-panel-body pad" style={{ display: 'grid', gap: 12 }}>
+            <dl className="ops-facts">
+              <div>
+                <dt>Status</dt>
+                <dd>{subscription.status}</dd>
+              </div>
+              <div>
+                <dt>Plan</dt>
+                <dd>{subscription.planCode}</dd>
+              </div>
+              <div>
+                <dt>Period ends</dt>
+                <dd>{subscription.currentPeriodEnd ? formatDate(subscription.currentPeriodEnd) : 'No end (open pilot)'}</dd>
+              </div>
+              <div>
+                <dt>Grace ends</dt>
+                <dd>{subscription.graceEndsAt ? formatDate(subscription.graceEndsAt) : '—'}</dd>
+              </div>
+            </dl>
+            <SubscriptionControl businessId={business.id} businessName={business.name} />
+          </div>
+        )}
+      </Panel>
+
+      <Panel title="Allowance">
+        {!periodResult.ok ? (
+          <Empty art="analytics" title="AI usage unavailable">
+            {periodResult.error}
+          </Empty>
+        ) : !periodResult.data.period ? (
+          <Empty art="analytics" title="No usage period">
+            This shop has no open usage period. Every shop should get one from migration 0070.
+          </Empty>
+        ) : (
+          <div className="ops-panel-body pad">
+            <AllowanceMeter
+              period={periodResult.data.period}
+              spentToday={periodResult.data.totals.costMicros}
+              control={
+                <AllowanceControl
+                  businessId={business.id}
+                  businessName={business.name}
+                  allowanceMicros={periodResult.data.period.allowanceMicros}
+                  bonusMicros={periodResult.data.period.bonusMicros}
+                />
+              }
+            />
+          </div>
+        )}
+      </Panel>
+
+      <Panel title="Feature overrides">
+        <ShopFlags businessId={business.id} overrides={featureOverrides} />
+      </Panel>
+
       <Panel title="Features used" count={usage.length}>
         {usage.length === 0 ? (
           <Empty art="assistant" title="Nothing used yet">
@@ -600,7 +712,7 @@ function UsageTab({ detail, now, days }: TabProps & { days: number }) {
         )}
       </Panel>
 
-      <ShopAiCost businessId={detail.business.id} days={days} />
+      <ShopAiCost businessId={business.id} days={days} />
     </>
   );
 }
@@ -614,7 +726,7 @@ async function ShopAiCost({ businessId, days }: { businessId: string; days: numb
           {WINDOWS.map((window) => (
             <Link
               key={window.days}
-              href={`/businesses/${businessId}?tab=usage&days=${window.days}`}
+              href={`/businesses/${businessId}?tab=money&days=${window.days}`}
               className={window.days === days ? 'ops-seg-btn is-active' : 'ops-seg-btn'}
               aria-current={window.days === days ? 'page' : undefined}
               scroll={false}

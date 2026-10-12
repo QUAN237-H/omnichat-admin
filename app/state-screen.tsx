@@ -14,19 +14,30 @@ function copyFor({ status, error, code }: Props): { art: Art3DName; title: strin
   }
   if (code === 'needs_migration') {
     return {
-      art: 'gear',
-      title: 'Admin tables are not set up yet',
+      art: 'flags',
+      title: 'Database is missing a migration',
       body: (
         <>
-          Apply <code>0066_internal_admins.sql</code>, then add your account to <code>internal_admins</code>.
+          {error || (
+            <>
+              Apply the pending Supabase migration (see <code>docs/ops</code>), then retry.
+            </>
+          )}
         </>
       ),
+    };
+  }
+  if (status === 404) {
+    return {
+      art: 'incidents',
+      title: 'This route is not on the worker yet',
+      body: 'Deploy the worker (railway up) so new ops APIs like /admin/flags are live, then refresh.',
     };
   }
   if (status === 503) {
     return { art: 'clock', title: 'The worker is not answering', body: error };
   }
-  return { art: 'bell', title: 'Something went wrong', body: error };
+  return { art: 'attention', title: 'Something went wrong', body: error };
 }
 
 /** Full-screen refusal before the console frame exists (not an operator, tables missing). */
