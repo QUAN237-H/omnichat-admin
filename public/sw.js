@@ -20,7 +20,7 @@ function readPayload(event) {
 self.addEventListener('push', (event) => {
   const data = readPayload(event);
   const title = typeof data.title === 'string' && data.title ? data.title : 'OmniChat Ops';
-  const url = typeof data.url === 'string' && data.url.startsWith('/') ? data.url : '/incidents';
+  const url = typeof data.url === 'string' && data.url.startsWith('/') ? data.url : '/notifications';
 
   event.waitUntil(
     self.registration.showNotification(title, {
@@ -35,7 +35,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url = (event.notification.data && event.notification.data.url) || '/incidents';
+  const url = (event.notification.data && event.notification.data.url) || '/notifications';
 
   event.waitUntil(
     (async () => {

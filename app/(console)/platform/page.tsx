@@ -155,7 +155,7 @@ export default async function PlatformPage() {
       <p className="ops-muted" style={{ marginTop: 0 }}>
         <Link href="/">Needs attention</Link>
         {' · '}
-        <Link href="/incidents">Incidents</Link>
+        <Link href="/notifications">Notifications</Link>
         {' · '}
         <Link href="/costs">Costs</Link>
         {' · '}
@@ -210,7 +210,7 @@ export default async function PlatformPage() {
         </div>
 
         <div className="ops-section">
-          <Panel title="WhatsApp fleet" link={{ href: '/incidents?severity=warn', label: 'Incidents' }}>
+          <Panel title="WhatsApp fleet" link={{ href: '/notifications?severity=warn', label: 'Notifications' }}>
             <section className="ops-strip" aria-label="WhatsApp counts">
               <Stat label="Live" value={whatsapp.live} />
               <Stat label="Down" value={whatsapp.down} tone={whatsapp.down > 0 ? 'warning' : undefined} />
@@ -301,7 +301,7 @@ export default async function PlatformPage() {
         </div>
 
         <div className="ops-section">
-          <Panel title="Job & AI failures" note="ops_events · 24h" link={{ href: '/incidents', label: 'Feed' }}>
+          <Panel title="Job & AI failures" note="ops_events · 24h" link={{ href: '/notifications', label: 'Feed' }}>
             {jobs.byKind24h.length === 0 ? (
               <div className="ops-empty">
                 <Art3D name="check" size={56} />
@@ -322,7 +322,7 @@ export default async function PlatformPage() {
                     {jobs.byKind24h.map((row) => (
                       <tr key={row.kind}>
                         <td>
-                          <Link href="/incidents">{incidentKindLabel(row.kind)}</Link>
+                          <Link href={`/notifications?kind=${row.kind}`}>{incidentKindLabel(row.kind)}</Link>
                         </td>
                         <td className="ops-right num">{row.count}</td>
                         <td className="ops-right num">{row.shops}</td>

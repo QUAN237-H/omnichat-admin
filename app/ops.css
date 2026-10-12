@@ -1338,3 +1338,44 @@ button.ops-pager-page[data-active]:hover:not(:disabled) {
   border-color: var(--text);
   color: var(--canvas);
 }
+
+/* ---------- Notifications filters ---------- */
+
+.ops-page-actions {
+  flex: 0 0 auto;
+  max-width: 280px;
+}
+
+.ops-page-actions .ops-alerts {
+  margin-bottom: 0;
+}
+
+.ops-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-3);
+  margin: 0 0 var(--s-4);
+}
+
+.ops-filter-field {
+  display: grid;
+  gap: 4px;
+  min-width: min(100%, 280px);
+}
+
+.ops-filter-field > .ops-muted {
+  font-size: var(--text-xs);
+}
+
+.ops-select {
+  width: 100%;
+  max-width: 360px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-sm);
+}

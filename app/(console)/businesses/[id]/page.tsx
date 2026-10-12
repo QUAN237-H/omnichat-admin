@@ -15,6 +15,7 @@ import {
   messageKindLabel,
   timeAgo,
 } from '../../../../lib/format';
+import { loadFxSnapshot } from '../../../../lib/fx-server';
 import { ArrowLeft } from '../../../../lib/icons';
 import type { BusinessDetail, IncidentsResponse, ShopUsageResponse } from '../../../../lib/types';
 import { workerGet } from '../../../../lib/worker';
@@ -354,7 +355,10 @@ function OverviewTab({
 
 /** Read-only meter on Overview — mutations live on AI & money. */
 async function AiEmployeeSummary({ businessId }: { businessId: string }) {
-  const result = await workerGet<ShopUsageResponse>(`/admin/businesses/${businessId}/usage?days=1`);
+  const [result, fx] = await Promise.all([
+    workerGet<ShopUsageResponse>(`/admin/businesses/${businessId}/usage?days=1`),
+    loadFxSnapshot(),
+  ]);
   return (
     <Panel title="AI employee" link={{ href: `/businesses/${businessId}?tab=money`, label: 'AI & money' }}>
       {!result.ok ? (
@@ -367,7 +371,11 @@ async function AiEmployeeSummary({ businessId }: { businessId: string }) {
         </Empty>
       ) : (
         <div className="ops-panel-body pad">
-          <AllowanceMeter period={result.data.period} spentToday={result.data.totals.costMicros} />
+          <AllowanceMeter
+            period={result.data.period}
+            spentToday={result.data.totals.costMicros}
+            xafPerUsd={fx.rate}
+          />
         </div>
       )}
     </Panel>
@@ -378,10 +386,12 @@ function AllowanceMeter({
   period,
   spentToday,
   control,
+  xafPerUsd,
 }: {
   period: NonNullable<ShopUsageResponse['period']>;
   spentToday: number;
   control?: ReactNode;
+  xafPerUsd?: number | null;
 }) {
   const allowance = period.allowanceMicros + period.bonusMicros;
   const share = allowance > 0 ? period.costMicros / allowance : null;
@@ -389,9 +399,11 @@ function AllowanceMeter({
   return (
     <div className="ops-meter-card">
       <div className="ops-meter-top">
-        <span className="ops-meter-value num">{formatUsd(period.costMicros)}</span>
+        <span className="ops-meter-value num">{formatUsd(period.costMicros, xafPerUsd)}</span>
         <span className="ops-muted">
-          {share === null ? 'No allowance set' : `of ${formatUsd(allowance)} · ${Math.round(share * 100)}% used`}
+          {share === null
+            ? 'No allowance set'
+            : `of ${formatUsd(allowance, xafPerUsd)} · ${Math.round(share * 100)}% used`}
         </span>
       </div>
       <div className="ops-meter-bar" data-tone={tone} aria-hidden="true">
@@ -399,8 +411,8 @@ function AllowanceMeter({
       </div>
       <div className="ops-meter-foot">
         <span>
-          Since {formatDate(period.startedAt)} · {formatUsd(spentToday)} in the last 24 h
-          {period.bonusMicros > 0 ? ` · includes a ${formatUsd(period.bonusMicros)} bonus` : ''}
+          Since {formatDate(period.startedAt)} · {formatUsd(spentToday, xafPerUsd)} in the last 24 h
+          {period.bonusMicros > 0 ? ` · includes a ${formatUsd(period.bonusMicros, xafPerUsd)} bonus` : ''}
         </span>
         {control}
       </div>
@@ -507,7 +519,7 @@ async function ShopIncidents({ businessId, now }: { businessId: string; now: num
       title="Recent incidents"
       link={
         result.ok && result.data.total > result.data.entries.length
-          ? { href: `/incidents?businessId=${businessId}`, label: `All ${result.data.total}` }
+          ? { href: `/notifications?businessId=${businessId}`, label: `All ${result.data.total}` }
           : undefined
       }
     >
@@ -600,7 +612,10 @@ async function ShopAiReliability({ businessId }: { businessId: string }) {
 
 async function MoneyTab({ detail, now, days }: TabProps & { days: number }) {
   const { usage, business, subscription, featureOverrides = [] } = detail;
-  const periodResult = await workerGet<ShopUsageResponse>(`/admin/businesses/${business.id}/usage?days=1`);
+  const [periodResult, fx] = await Promise.all([
+    workerGet<ShopUsageResponse>(`/admin/businesses/${business.id}/usage?days=1`),
+    loadFxSnapshot(),
+  ]);
   return (
     <>
       <Panel title="AI replies">
@@ -664,6 +679,7 @@ async function MoneyTab({ detail, now, days }: TabProps & { days: number }) {
             <AllowanceMeter
               period={periodResult.data.period}
               spentToday={periodResult.data.totals.costMicros}
+              xafPerUsd={fx.rate}
               control={
                 <AllowanceControl
                   businessId={business.id}
@@ -718,7 +734,11 @@ async function MoneyTab({ detail, now, days }: TabProps & { days: number }) {
 }
 
 async function ShopAiCost({ businessId, days }: { businessId: string; days: number }) {
-  const result = await workerGet<ShopUsageResponse>(`/admin/businesses/${businessId}/usage?days=${days}`);
+  const [result, fx] = await Promise.all([
+    workerGet<ShopUsageResponse>(`/admin/businesses/${businessId}/usage?days=${days}`),
+    loadFxSnapshot(),
+  ]);
+  const xaf = fx.rate;
   return (
     <Panel title="AI calls and cost" link={{ href: `/costs?days=${days}`, label: 'All shops' }}>
       <div className="ops-panel-body pad" style={{ display: 'grid', gap: 14 }}>
@@ -743,19 +763,23 @@ async function ShopAiCost({ businessId, days }: { businessId: string; days: numb
           <NoUsage>No AI calls billed to this shop in this window. Recording started with this release.</NoUsage>
         ) : (
           <>
-            <UsageStats totals={result.data.totals} label={`AI usage, last ${days} days`} />
+            <UsageStats
+              totals={result.data.totals}
+              label={`AI usage, last ${days} days`}
+              xafPerUsd={xaf}
+            />
             {result.data.period ? (
               <p className="ops-group-note mt-0">
                 This billing period (since {formatDate(result.data.period.startedAt)}):{' '}
-                {formatUsd(result.data.period.costMicros)} estimated
+                {formatUsd(result.data.period.costMicros, xaf)} estimated
                 {result.data.period.allowanceMicros > 0
-                  ? ` of a ${formatUsd(result.data.period.allowanceMicros + result.data.period.bonusMicros)} allowance`
+                  ? ` of a ${formatUsd(result.data.period.allowanceMicros + result.data.period.bonusMicros, xaf)} allowance`
                   : ', no allowance set yet'}
                 .
               </p>
             ) : null}
-            <FeatureCostTable rows={result.data.byFeature} />
-            <ModelCostTable rows={result.data.byModel} />
+            <FeatureCostTable rows={result.data.byFeature} xafPerUsd={xaf} />
+            <ModelCostTable rows={result.data.byModel} xafPerUsd={xaf} />
           </>
         )}
       </div>

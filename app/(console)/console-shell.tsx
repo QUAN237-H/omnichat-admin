@@ -56,10 +56,10 @@ export default function ConsoleShell({
       active: pathname.startsWith('/flags'),
     },
     {
-      href: '/incidents',
-      label: 'Incidents',
-      art: 'incidents',
-      active: pathname.startsWith('/incidents'),
+      href: '/notifications',
+      label: 'Notifications',
+      art: 'bell',
+      active: pathname.startsWith('/notifications') || pathname.startsWith('/incidents'),
     },
     {
       href: '/platform',

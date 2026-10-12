@@ -146,6 +146,7 @@ const INCIDENT_KIND_LABEL: Record<string, string> = {
   catalog_import_failed: 'Catalog import failed',
   status_post_failed: 'Status post failed',
   document_ingest_failed: 'Document upload failed',
+  usage_ledger_write_failed: 'Usage ledger write failed',
 };
 
 export function incidentKindLabel(kind: string): string {

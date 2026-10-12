@@ -20,7 +20,7 @@ Auth: Supabase sign-in. Worker `/admin/*` requires a row in `internal_admins`.
 
 1. **Attention** (`/`) — shops that need an operator now  
 2. **Shops** (`/shops`) — full fleet  
-3. **Waitlist** · **Costs** (prices at `/costs/prices`) · **Incidents** · **Audit**
+3. **Waitlist** · **Costs** (prices at `/costs/prices`) · **Notifications** · **Audit**
 
 Shop cockpit tabs: Overview · WhatsApp · AI & money · Reliability.
 
