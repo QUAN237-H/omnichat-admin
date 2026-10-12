@@ -286,7 +286,6 @@ export type PlatformHealth = {
       pairing: number;
       other: number;
     };
-    notes: string[];
   };
   snapshot: {
     whatsapp: {

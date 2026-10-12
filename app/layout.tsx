@@ -22,7 +22,21 @@ const bricolage = Bricolage_Grotesque({
 export const metadata: Metadata = {
   title: { default: 'OmniChat Ops', template: '%s · OmniChat Ops' },
   applicationName: 'OmniChat Ops',
+  description: 'Internal operator console for OmniChat fleet health and shop controls.',
   robots: { index: false, follow: false },
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'OmniChat Ops',
+    statusBarStyle: 'default',
+  },
+  icons: {
+    icon: [
+      { url: '/brand/omnichat-icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/brand/omnichat-icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/brand/omnichat-icon-192.png', sizes: '192x192', type: 'image/png' }],
+  },
 };
 
 export const viewport: Viewport = {

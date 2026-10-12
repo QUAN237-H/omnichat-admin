@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Art3D, type Art3DName, BrandMark, BrandWordmark } from '../brand';
 import SignOutButton from '../sign-out-button';
+import OpsAlertsControl from './ops-alerts-control';
 
 type NavItem = { href: string; label: string; art: Art3DName; active: boolean; count?: number };
 
@@ -106,6 +107,7 @@ export default function ConsoleShell({
           ))}
         </nav>
         <div className="app-sidebar-footer">
+          <OpsAlertsControl />
           <SignOutButton variant="nav" />
         </div>
       </aside>

@@ -193,11 +193,6 @@ export default async function PlatformPage() {
                 </dd>
               </div>
             </dl>
-            <ul className="ops-muted" style={{ margin: '12px 0 0', paddingLeft: 18, fontSize: '0.9em' }}>
-              {worker.notes.map((note) => (
-                <li key={note}>{note}</li>
-              ))}
-            </ul>
           </Panel>
 
           <Panel title="Messages" link={{ href: '/', label: 'Triage' }}>

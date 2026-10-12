@@ -23,3 +23,9 @@ Auth: Supabase sign-in. Worker `/admin/*` requires a row in `internal_admins`.
 3. **Waitlist** · **Costs** (prices at `/costs/prices`) · **Incidents** · **Audit**
 
 Shop cockpit tabs: Overview · WhatsApp · AI & money · Reliability.
+
+## PWA alerts
+
+Installable via `manifest.webmanifest` + `sw.js`. Set `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+(same as worker/Desk). Sidebar **Alerts on this device** registers the browser
+through `POST /admin/push/subscribe` (needs migration **0078**).
