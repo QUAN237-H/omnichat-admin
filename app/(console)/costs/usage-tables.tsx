@@ -7,23 +7,29 @@ export function UsageStats({
   totals,
   label,
   conversations,
+  xafPerUsd,
 }: {
   totals: UsageTotals;
   label: string;
   conversations?: number;
+  xafPerUsd?: number | null;
 }) {
   const failRate = totals.attempts > 0 ? totals.failures / totals.attempts : 0;
   return (
     <section className="ops-strip" aria-label={label}>
       <Stat
         label="Estimated cost"
-        value={formatUsd(totals.costMicros)}
-        sub={totals.wastedMicros > 0 ? `${formatUsd(totals.wastedMicros)} on failed calls` : 'Nothing lost to failed calls'}
+        value={formatUsd(totals.costMicros, xafPerUsd)}
+        sub={
+          totals.wastedMicros > 0
+            ? `${formatUsd(totals.wastedMicros, xafPerUsd)} on failed calls`
+            : 'Nothing lost to failed calls'
+        }
       />
       {conversations !== undefined ? (
         <Stat
           label="Per conversation"
-          value={conversations > 0 ? formatUsd(totals.costMicros / conversations) : '—'}
+          value={conversations > 0 ? formatUsd(totals.costMicros / conversations, xafPerUsd) : '—'}
           sub={conversations === 1 ? '1 conversation' : `${conversations.toLocaleString('en-US')} conversations`}
         />
       ) : null}
@@ -89,10 +95,10 @@ export function Stat({
   );
 }
 
-function CostCell({ row }: { row: UsageTotals }) {
+function CostCell({ row, xafPerUsd }: { row: UsageTotals; xafPerUsd?: number | null }) {
   return (
     <td className={row.costMicros > 0 ? 'ops-right num ops-strong' : 'ops-right num ops-faint'}>
-      {formatUsd(row.costMicros)}
+      {formatUsd(row.costMicros, xafPerUsd)}
       {row.priceMissing > 0 ? <div className="ops-sub">+ {row.priceMissing} unpriced</div> : null}
     </td>
   );
@@ -113,7 +119,17 @@ function CallsCells({ row }: { row: UsageTotals }) {
   );
 }
 
-export function ShopCostTable({ rows, now, days }: { rows: UsageByShop[]; now: number; days: number }) {
+export function ShopCostTable({
+  rows,
+  now,
+  days,
+  xafPerUsd,
+}: {
+  rows: UsageByShop[];
+  now: number;
+  days: number;
+  xafPerUsd?: number | null;
+}) {
   return (
     <div className="import-table-wrap ops-table-wrap">
       <table className="import-table ops-table">
@@ -134,7 +150,7 @@ export function ShopCostTable({ rows, now, days }: { rows: UsageByShop[]; now: n
                   {row.businessName ?? 'Deleted shop'}
                 </Link>
               </td>
-              <CostCell row={row} />
+              <CostCell row={row} xafPerUsd={xafPerUsd} />
               <CallsCells row={row} />
               <td className="ops-muted">{timeAgo(row.lastAt, now)}</td>
             </tr>
@@ -145,7 +161,13 @@ export function ShopCostTable({ rows, now, days }: { rows: UsageByShop[]; now: n
   );
 }
 
-export function FeatureCostTable({ rows }: { rows: UsageByFeature[] }) {
+export function FeatureCostTable({
+  rows,
+  xafPerUsd,
+}: {
+  rows: UsageByFeature[];
+  xafPerUsd?: number | null;
+}) {
   return (
     <div className="import-table-wrap ops-table-wrap">
       <table className="import-table ops-table">
@@ -161,7 +183,7 @@ export function FeatureCostTable({ rows }: { rows: UsageByFeature[] }) {
           {rows.map((row) => (
             <tr key={row.feature}>
               <td>{aiFeatureLabel(row.feature)}</td>
-              <CostCell row={row} />
+              <CostCell row={row} xafPerUsd={xafPerUsd} />
               <CallsCells row={row} />
             </tr>
           ))}
@@ -171,7 +193,13 @@ export function FeatureCostTable({ rows }: { rows: UsageByFeature[] }) {
   );
 }
 
-export function ModelCostTable({ rows }: { rows: UsageByModel[] }) {
+export function ModelCostTable({
+  rows,
+  xafPerUsd,
+}: {
+  rows: UsageByModel[];
+  xafPerUsd?: number | null;
+}) {
   return (
     <div className="import-table-wrap ops-table-wrap">
       <table className="import-table ops-table">
@@ -191,7 +219,7 @@ export function ModelCostTable({ rows }: { rows: UsageByModel[] }) {
                 <span className="ops-shop-name">{row.model}</span>
                 <div className="ops-sub">{row.provider}</div>
               </td>
-              <CostCell row={row} />
+              <CostCell row={row} xafPerUsd={xafPerUsd} />
               <CallsCells row={row} />
               <td>
                 {row.priceMissing > 0 ? (

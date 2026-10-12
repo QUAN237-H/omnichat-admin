@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { formatUsd } from '../../../lib/format';
+import { loadFxSnapshot } from '../../../lib/fx-server';
 import type { FleetUsageResponse } from '../../../lib/types';
 import { workerGet } from '../../../lib/worker';
 import { StatePanel } from '../../state-screen';
+import FxRateBar from '../fx-rate-bar';
 import {
   FeatureCostTable,
   ModelCostTable,
@@ -18,7 +20,10 @@ export const metadata: Metadata = { title: 'AI costs' };
 
 export default async function CostsPage({ searchParams }: { searchParams: Promise<{ days?: string }> }) {
   const days = windowDays((await searchParams).days);
-  const result = await workerGet<FleetUsageResponse>(`/admin/usage?days=${days}`);
+  const [result, fx] = await Promise.all([
+    workerGet<FleetUsageResponse>(`/admin/usage?days=${days}`),
+    loadFxSnapshot(),
+  ]);
   if (!result.ok) {
     return <StatePanel status={result.status} error={result.error} code={result.code} />;
   }
@@ -26,6 +31,7 @@ export default async function CostsPage({ searchParams }: { searchParams: Promis
   const usage = result.data;
   const now = Date.parse(usage.generatedAt);
   const missingModels = usage.byModel.filter((row) => row.priceMissing > 0).length;
+  const xaf = fx.rate;
 
   return (
     <main className="ops-page">
@@ -43,6 +49,8 @@ export default async function CostsPage({ searchParams }: { searchParams: Promis
         </Link>
       </header>
 
+      <FxRateBar />
+
       <nav className="chip-group ops-tabs" aria-label="Time window">
         {WINDOWS.map((window) => (
           <Link
@@ -57,7 +65,12 @@ export default async function CostsPage({ searchParams }: { searchParams: Promis
         ))}
       </nav>
 
-      <UsageStats totals={usage.totals} label={`Last ${days} days`} conversations={usage.conversations} />
+      <UsageStats
+        totals={usage.totals}
+        label={`Last ${days} days`}
+        conversations={usage.conversations}
+        xafPerUsd={xaf}
+      />
 
       {missingModels > 0 ? (
         <p className="ops-group-note">
@@ -76,11 +89,13 @@ export default async function CostsPage({ searchParams }: { searchParams: Promis
               <h2>By shop</h2>
               <span className="desk-group-count">{usage.byShop.length}</span>
             </div>
-            {usage.byShop.length > 0 ? <ShopCostTable rows={usage.byShop} now={now} days={days} /> : null}
+            {usage.byShop.length > 0 ? (
+              <ShopCostTable rows={usage.byShop} now={now} days={days} xafPerUsd={xaf} />
+            ) : null}
             {usage.unattributed.attempts > 0 ? (
               <p className="ops-group-note">
-                {usage.unattributed.attempts} calls ({formatUsd(usage.unattributed.costMicros)}) were not tied to a
-                shop. They come from code paths with no usage scope yet.
+                {usage.unattributed.attempts} calls ({formatUsd(usage.unattributed.costMicros, xaf)}) were not tied to
+                a shop. They come from code paths with no usage scope yet.
               </p>
             ) : null}
           </section>
@@ -90,7 +105,7 @@ export default async function CostsPage({ searchParams }: { searchParams: Promis
               <h2>By feature</h2>
               <span className="desk-group-count">{usage.byFeature.length}</span>
             </div>
-            <FeatureCostTable rows={usage.byFeature} />
+            <FeatureCostTable rows={usage.byFeature} xafPerUsd={xaf} />
           </section>
 
           <section className="desk-group">
@@ -98,7 +113,7 @@ export default async function CostsPage({ searchParams }: { searchParams: Promis
               <h2>By model</h2>
               <span className="desk-group-count">{usage.byModel.length}</span>
             </div>
-            <ModelCostTable rows={usage.byModel} />
+            <ModelCostTable rows={usage.byModel} xafPerUsd={xaf} />
           </section>
 
           <section className="desk-group">

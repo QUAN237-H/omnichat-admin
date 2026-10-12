@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { attentionReasons, whatsappHealth } from '../../lib/attention';
 import { formatPercent, formatPhone, formatUsd, formatXaf, timeAgo } from '../../lib/format';
+import { useXafPerUsd } from '../../lib/fx';
 import { LayoutGrid, LayoutList, Search, X } from '../../lib/icons';
 import type { FleetAi, FleetShop } from '../../lib/types';
 import { Art3D } from '../brand';
@@ -72,12 +73,15 @@ function readLayout(): LayoutMode {
 }
 
 function AiCell({ ai }: { ai: FleetAi | null }) {
+  const xaf = useXafPerUsd();
   if (!ai) return <td className="ops-right ops-faint">—</td>;
   const allowance = ai.allowanceMicros + ai.bonusMicros;
   const share = allowance > 0 ? ai.periodCostMicros / allowance : null;
   return (
     <td className="ops-right">
-      <span className={ai.cost24hMicros > 0 ? 'num ops-strong' : 'num ops-faint'}>{formatUsd(ai.cost24hMicros)}</span>
+      <span className={ai.cost24hMicros > 0 ? 'num ops-strong' : 'num ops-faint'}>
+        {formatUsd(ai.cost24hMicros, xaf)}
+      </span>
       <div className={share !== null && share >= 0.8 ? 'ops-sub ops-bad' : 'ops-sub'}>
         {share === null ? 'No allowance set' : `${formatPercent(ai.periodCostMicros, allowance)} of allowance`}
       </div>
@@ -110,6 +114,7 @@ function shopCockpitHref(shop: FleetShop): string {
 }
 
 function ShopCard({ shop, now }: { shop: FleetShop; now: number }) {
+  const xaf = useXafPerUsd();
   const reasons = attentionReasons(shop);
   const problems = shop.failed24h + shop.stuck;
   const trouble = problems > 0 || reasons.length > 0;
@@ -152,7 +157,7 @@ function ShopCard({ shop, now }: { shop: FleetShop; now: number }) {
         </div>
         <div>
           <dt>AI 24h</dt>
-          <dd className="num">{shop.ai ? formatUsd(shop.ai.cost24hMicros) : '—'}</dd>
+          <dd className="num">{shop.ai ? formatUsd(shop.ai.cost24hMicros, xaf) : '—'}</dd>
         </div>
       </dl>
       <div className="ops-card-foot">

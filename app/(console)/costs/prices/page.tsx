@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { formatDate, formatUnitPrice, priceUnitInfo } from '../../../../lib/format';
+import { loadFxSnapshot } from '../../../../lib/fx-server';
 import { ArrowLeft } from '../../../../lib/icons';
 import type { FleetUsageResponse, PricesResponse } from '../../../../lib/types';
 import { workerGet } from '../../../../lib/worker';
 import { StatePanel } from '../../../state-screen';
+import FxRateBar from '../../fx-rate-bar';
 import PriceForm from './price-form';
 
 export const metadata: Metadata = { title: 'Model prices' };
@@ -15,9 +17,10 @@ export default async function PricesPage({
   searchParams: Promise<{ provider?: string; model?: string }>;
 }) {
   const params = await searchParams;
-  const [prices, usage] = await Promise.all([
+  const [prices, usage, fx] = await Promise.all([
     workerGet<PricesResponse>('/admin/prices'),
     workerGet<FleetUsageResponse>('/admin/usage?days=30'),
+    loadFxSnapshot(),
   ]);
   if (!prices.ok) {
     return <StatePanel status={prices.status} error={prices.error} code={prices.code} />;
@@ -25,6 +28,7 @@ export default async function PricesPage({
 
   const missing = usage.ok ? usage.data.byModel.filter((row) => row.priceMissing > 0) : [];
   const rows = prices.data.prices;
+  const xaf = fx.rate;
 
   return (
     <main className="ops-page">
@@ -44,6 +48,8 @@ export default async function PricesPage({
           </p>
         </div>
       </header>
+
+      <FxRateBar />
 
       {missing.length > 0 ? (
         <section className="desk-group">
@@ -114,7 +120,7 @@ export default async function PricesPage({
                     </div>
                   </td>
                   <td>{priceUnitInfo(row.unit).label}</td>
-                  <td className="ops-right num">{formatUnitPrice(row.unit, row.priceMicrosPerUnit)}</td>
+                  <td className="ops-right num">{formatUnitPrice(row.unit, row.priceMicrosPerUnit, xaf)}</td>
                   <td className="ops-muted">{formatDate(row.effectiveFrom)}</td>
                   <td className="ops-muted">{row.sourceNote ?? '—'}</td>
                 </tr>

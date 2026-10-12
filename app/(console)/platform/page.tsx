@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { incidentKindLabel, formatUsd } from '../../../lib/format';
+import { loadFxSnapshot } from '../../../lib/fx-server';
 import { incidentShopHref } from '../../../lib/incidentHref';
 import type { PlatformHealth } from '../../../lib/types';
 import { workerGet } from '../../../lib/worker';
@@ -92,7 +93,10 @@ function ShopList({
 }
 
 export default async function PlatformPage() {
-  const result = await workerGet<PlatformHealth>('/admin/platform');
+  const [result, fx] = await Promise.all([
+    workerGet<PlatformHealth>('/admin/platform'),
+    loadFxSnapshot(),
+  ]);
   if (!result.ok) {
     return <StatePanel status={result.status} error={result.error} code={result.code} />;
   }
@@ -101,6 +105,7 @@ export default async function PlatformPage() {
   const { whatsapp, messages, costs, jobs } = snapshot;
   const tone = verdictTone(verdict);
   const commit = worker.railway.commitSha ? worker.railway.commitSha.slice(0, 7) : null;
+  const xaf = fx.rate;
 
   return (
     <main className="ops-page">
@@ -143,7 +148,7 @@ export default async function PlatformPage() {
         </div>
         <div className="ops-strip-item">
           <span className="ops-strip-label">AI today</span>
-          <strong className="ops-strip-value num">{formatUsd(costs.todayMicros)}</strong>
+          <strong className="ops-strip-value num">{formatUsd(costs.todayMicros, xaf)}</strong>
         </div>
       </section>
 
@@ -255,11 +260,11 @@ export default async function PlatformPage() {
             <dl className="ops-facts">
               <div>
                 <dt>Today</dt>
-                <dd className="num">{formatUsd(costs.todayMicros)}</dd>
+                <dd className="num">{formatUsd(costs.todayMicros, xaf)}</dd>
               </div>
               <div>
                 <dt>7-day daily avg</dt>
-                <dd className="num">{formatUsd(costs.avgDay7Micros)}</dd>
+                <dd className="num">{formatUsd(costs.avgDay7Micros, xaf)}</dd>
               </div>
               <div>
                 <dt>Today vs baseline</dt>
@@ -278,7 +283,7 @@ export default async function PlatformPage() {
                 const hot = costs.hotShops.find((row) => row.id === shop.id);
                 if (!hot) return '';
                 const ratio = hot.ratio === null ? 'new' : `${hot.ratio.toFixed(1)}×`;
-                return `${formatUsd(hot.todayMicros)} · ${ratio}`;
+                return `${formatUsd(hot.todayMicros, xaf)} · ${ratio}`;
               }}
             />
             <p className="ops-group-note" style={{ margin: '14px 0 6px' }}>

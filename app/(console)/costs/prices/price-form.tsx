@@ -3,6 +3,7 @@
 import { type FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PRICE_UNITS, formatUnitPrice, priceUnitInfo } from '../../../../lib/format';
+import { useXafPerUsd } from '../../../../lib/fx';
 import { useCanMutate } from '../../../../lib/ops-role';
 import { Loader2 } from '../../../../lib/icons';
 import { addModelPrice } from './actions';
@@ -18,6 +19,7 @@ function today(): string {
 export default function PriceForm({ provider: initialProvider, model: initialModel }: { provider: string; model: string }) {
   const router = useRouter();
   const canMutate = useCanMutate();
+  const xafPerUsd = useXafPerUsd();
   const requestId = useRef<string | null>(null);
   const [provider, setProvider] = useState(initialProvider);
   const [model, setModel] = useState(initialModel);
@@ -66,7 +68,7 @@ export default function PriceForm({ provider: initialProvider, model: initialMod
       return;
     }
     requestId.current = null;
-    setSaved(`${info.label} for ${model.trim()}: ${formatUnitPrice(unit, microsPerUnit)}`);
+    setSaved(`${info.label} for ${model.trim()}: ${formatUnitPrice(unit, microsPerUnit, xafPerUsd)}`);
     setUsd('');
     router.refresh();
   }

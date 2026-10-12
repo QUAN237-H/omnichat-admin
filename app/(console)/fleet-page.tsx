@@ -1,13 +1,17 @@
 import Link from 'next/link';
 import { fleetAlarm, needsAttention, whatsappHealth } from '../../lib/attention';
 import { formatUsd, formatXaf } from '../../lib/format';
+import { loadFxSnapshot } from '../../lib/fx-server';
 import type { FleetResponse } from '../../lib/types';
 import { workerGet } from '../../lib/worker';
 import { StatePanel } from '../state-screen';
 import FleetTable from './fleet-table';
 
 export default async function FleetPage({ view }: { view: 'attention' | 'all' }) {
-  const fleet = await workerGet<FleetResponse>('/admin/businesses');
+  const [fleet, fx] = await Promise.all([
+    workerGet<FleetResponse>('/admin/businesses'),
+    loadFxSnapshot(),
+  ]);
   if (!fleet.ok) {
     return <StatePanel status={fleet.status} error={fleet.error} code={fleet.code} />;
   }
@@ -100,7 +104,7 @@ export default async function FleetPage({ view }: { view: 'attention' | 'all' })
         {ledgerReady ? (
           <Link href="/costs?days=1" className="ops-strip-item ops-strip-link">
             <span className="ops-strip-label">AI cost, 24h</span>
-            <strong className="ops-strip-value num">{formatUsd(aiCost24h)}</strong>
+            <strong className="ops-strip-value num">{formatUsd(aiCost24h, fx.rate)}</strong>
             <span className="ops-strip-meta">
               {aiCalls24h === 1 ? '1 call' : `${aiCalls24h.toLocaleString('en-US')} calls`}
             </span>

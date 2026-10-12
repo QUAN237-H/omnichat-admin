@@ -1261,6 +1261,33 @@ button.ops-pager-page[data-active]:hover:not(:disabled) {
   }
 }
 
+/* ---------- FX rate bar (Costs / Prices) ---------- */
+
+.ops-fx-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin: 0 0 var(--s-4);
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.ops-fx-meta {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--text-xs);
+  color: var(--text-2);
+}
+
+.ops-fx-error {
+  flex: 1 1 100%;
+  font-size: 11px;
+  color: var(--danger);
+}
+
 /* ---------- Sidebar: device push alerts ---------- */
 
 .ops-alerts {

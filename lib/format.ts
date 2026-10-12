@@ -176,12 +176,28 @@ export function formatMs(ms: number | null): string {
   return `${(ms / 1000).toFixed(ms < 10_000 ? 1 : 0)} s`;
 }
 
-export function formatUsd(micros: number): string {
+/** Dollar string only (no XAF). Prefer `formatUsd` when a rate may be available. */
+export function formatUsdOnly(micros: number): string {
   const usd = micros / 1_000_000;
   if (usd === 0) return '$0';
   if (usd < 0.01) return `$${usd.toFixed(4)}`;
   if (usd < 100) return `$${usd.toFixed(2)}`;
   return `$${Math.round(usd).toLocaleString('en-US')}`;
+}
+
+function formatUsdXafBracket(usd: number, xafPerUsd: number): string {
+  const xaf = Math.round(usd * xafPerUsd);
+  return ` (≈ ${XAF.format(xaf)} XAF)`;
+}
+
+/**
+ * Ledger costs are micro-dollars. When `xafPerUsd` is set, appends
+ * ` (≈ N XAF)` using whole francs.
+ */
+export function formatUsd(micros: number, xafPerUsd?: number | null): string {
+  const dollars = formatUsdOnly(micros);
+  if (xafPerUsd == null || !Number.isFinite(xafPerUsd) || xafPerUsd <= 0) return dollars;
+  return `${dollars}${formatUsdXafBracket(micros / 1_000_000, xafPerUsd)}`;
 }
 
 const AI_FEATURE_LABEL: Record<string, string> = {
@@ -235,12 +251,17 @@ export function priceUnitInfo(unit: string): { label: string; per: number; perLa
   return PRICE_UNITS.find((row) => row.unit === unit) ?? { label: unit, per: 1, perLabel: 'per unit' };
 }
 
-/** "$0.30 per 1M tokens" from a per-unit micro-dollar price. */
-export function formatUnitPrice(unit: string, microsPerUnit: number): string {
+/** "$0.30 per 1M tokens" (≈ XAF) from a per-unit micro-dollar price. */
+export function formatUnitPrice(unit: string, microsPerUnit: number, xafPerUsd?: number | null): string {
   const info = priceUnitInfo(unit);
   const usd = (microsPerUnit * info.per) / 1_000_000;
   const digits = usd !== 0 && usd < 0.01 ? 6 : usd < 1 ? 4 : 2;
-  return `$${Number(usd.toFixed(digits)).toString()} ${info.perLabel}`;
+  const dollars = `$${Number(usd.toFixed(digits)).toString()}`;
+  const xaf =
+    xafPerUsd != null && Number.isFinite(xafPerUsd) && xafPerUsd > 0
+      ? formatUsdXafBracket(usd, xafPerUsd)
+      : '';
+  return `${dollars}${xaf} ${info.perLabel}`;
 }
 
 export function featureLabel(feature: string): string {
