@@ -31,16 +31,17 @@ export type Art3DName =
   | 'status'
   | 'store';
 
-const OPS_ART = new Set<string>([
-  'attention',
-  'shops',
-  'waitlist',
-  'costs',
-  'flags',
-  'incidents',
-  'platform',
-  'audit',
-]);
+/** File stem under /brand/ops — Platform uses a unique name so caches cannot reuse Attention. */
+const OPS_ART_FILE: Partial<Record<OpsArtName, string>> = {
+  attention: 'attention',
+  shops: 'shops',
+  waitlist: 'waitlist',
+  costs: 'costs',
+  flags: 'flags',
+  incidents: 'incidents',
+  platform: 'platform-nodes',
+  audit: 'audit',
+};
 
 /** Glossy clay icon — ops set lives under /brand/ops, Desk leftovers under /brand/3d. */
 export function Art3D({
@@ -54,7 +55,8 @@ export function Art3D({
   className?: string;
   priority?: boolean;
 }) {
-  const src = OPS_ART.has(name) ? `/brand/ops/${name}.webp` : `/brand/3d/${name}.webp`;
+  const opsFile = (OPS_ART_FILE as Record<string, string | undefined>)[name];
+  const src = opsFile ? `/brand/ops/${opsFile}.webp` : `/brand/3d/${name}.webp`;
   return (
     <Image
       src={src}

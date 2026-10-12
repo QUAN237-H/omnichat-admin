@@ -71,7 +71,7 @@ function ShopList({
   detail?: (shop: { id: string; name: string }, index: number) => string;
 }) {
   if (shops.length === 0) {
-    return <p className="ops-muted" style={{ margin: 0 }}>None right now.</p>;
+    return <p className="ops-storm-empty">None right now.</p>;
   }
   return (
     <ul className="ops-list">
@@ -220,10 +220,10 @@ export default async function PlatformPage() {
             </section>
           </Panel>
 
-          <Panel title="Storms" note="Last 24h unless noted">
-            <div style={{ display: 'grid', gap: 16 }}>
-              <div>
-                <p className="ops-group-note" style={{ margin: '0 0 6px' }}>
+          <Panel title="Storms" note="Last 24h unless noted" bodyClassName="ops-panel-body pad">
+            <div className="ops-storm-stack">
+              <div className="ops-storm-row">
+                <p className="ops-group-note">
                   Ban risk · {whatsapp.storms.banRisk24h.shops} shops · {whatsapp.storms.banRisk24h.events} events
                 </p>
                 <ShopList
@@ -231,8 +231,8 @@ export default async function PlatformPage() {
                   hrefFor={(id) => incidentShopHref(id, 'whatsapp_ban_risk')}
                 />
               </div>
-              <div>
-                <p className="ops-group-note" style={{ margin: '0 0 6px' }}>
+              <div className="ops-storm-row">
+                <p className="ops-group-note">
                   Still reconnecting · {whatsapp.storms.reconnecting24h.shops} shops
                 </p>
                 <ShopList
@@ -240,8 +240,8 @@ export default async function PlatformPage() {
                   hrefFor={(id) => incidentShopHref(id, 'whatsapp_still_reconnecting')}
                 />
               </div>
-              <div>
-                <p className="ops-group-note" style={{ margin: '0 0 6px' }}>
+              <div className="ops-storm-row">
+                <p className="ops-group-note">
                   Reconnect attempts · last hour · {whatsapp.storms.reconnectAttempts1h.shops} shops
                 </p>
                 <ShopList

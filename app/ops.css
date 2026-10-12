@@ -788,6 +788,27 @@ button.ops-pager-page[data-active]:hover:not(:disabled) {
   font-size: var(--text-xs);
 }
 
+.ops-storm-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.ops-storm-row {
+  display: grid;
+  gap: 8px;
+}
+
+.ops-storm-row .ops-group-note,
+.ops-storm-row .ops-storm-empty {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.ops-storm-empty {
+  color: var(--text-2);
+  font-size: var(--text-sm);
+}
+
 .ops-group-link {
   margin-left: auto;
   color: var(--text-2);
