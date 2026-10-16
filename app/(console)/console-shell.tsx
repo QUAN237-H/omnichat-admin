@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Art3D, type Art3DName, BrandMark, BrandWordmark } from '../brand';
 import SignOutButton from '../sign-out-button';
 import OpsAlertsControl from './ops-alerts-control';
+import OpsMoreSheet, { useOpsMoreOpen } from './ops-more-sheet';
 
 type NavItem = { href: string; label: string; art: Art3DName; active: boolean; count?: number };
 
@@ -22,6 +23,7 @@ export default function ConsoleShell({
 }) {
   const pathname = usePathname() ?? '/';
   const roleLabel = role === 'owner' ? 'Owner' : 'Operator';
+  const [moreOpen, openMore, closeMore] = useOpsMoreOpen();
 
   const nav: NavItem[] = [
     {
@@ -75,8 +77,17 @@ export default function ConsoleShell({
     },
   ];
 
+  const mobileTabs = [
+    nav[0]!,
+    nav[1]!,
+    nav[5]!,
+  ] as const;
+  const moreActive = ['/waitlist', '/costs', '/flags', '/platform', '/audit'].some((p) =>
+    pathname === p || pathname.startsWith(`${p}/`),
+  );
+
   return (
-    <div className="app">
+    <div className="app ops-app">
       <aside className="app-sidebar" aria-label="Main">
         <Link href="/" className="app-brand" aria-label="OmniChat Ops, needs attention">
           <BrandWordmark height={30} tagline="Operator console" />
@@ -129,6 +140,41 @@ export default function ConsoleShell({
         </header>
         {children}
       </div>
+
+      <nav className="app-tabbar ops-tabbar" aria-label="Ops">
+        {mobileTabs.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="app-tab"
+            aria-current={item.active ? 'page' : undefined}
+          >
+            <span className="app-tab-icon">
+              <Art3D name={item.art} size={22} />
+            </span>
+            {item.label === 'Notifications' ? 'Alerts' : item.label}
+            {item.count ? <span className="ops-tab-badge">{item.count}</span> : null}
+          </Link>
+        ))}
+        <button
+          type="button"
+          className="app-tab"
+          aria-current={moreActive || moreOpen ? 'page' : undefined}
+          aria-expanded={moreOpen}
+          onClick={openMore}
+        >
+          <span className="app-tab-icon">
+            <Art3D name="flags" size={22} />
+          </span>
+          More
+        </button>
+      </nav>
+
+      <OpsMoreSheet
+        open={moreOpen}
+        onClose={closeMore}
+        footer={<SignOutButton variant="nav" />}
+      />
     </div>
   );
 }

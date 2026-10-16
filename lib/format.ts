@@ -147,6 +147,9 @@ const INCIDENT_KIND_LABEL: Record<string, string> = {
   status_post_failed: 'Status post failed',
   document_ingest_failed: 'Document upload failed',
   usage_ledger_write_failed: 'Usage ledger write failed',
+  shop_created: 'New shop signed up',
+  proxy_pool_low: 'Sticky proxy IPs almost gone',
+  proxy_pool_exhausted: 'Sticky proxy IPs exhausted',
 };
 
 export function incidentKindLabel(kind: string): string {
@@ -162,6 +165,9 @@ export function incidentDetail(detail: unknown): string | null {
     text('reason'),
     text('error'),
     text('productName'),
+    text('name'),
+    text('location'),
+    typeof record.preferredFree === 'number' ? `${record.preferredFree} preferred IPs free` : null,
     typeof record.attempt === 'number' ? `${record.attempt} failed retries` : null,
     typeof record.waitedMs === 'number' ? `waited ${Math.round(record.waitedMs / 1000)} s for the lock` : null,
     typeof record.repeatsSincePrevious === 'number' ? `+${record.repeatsSincePrevious} more since the last entry` : null,

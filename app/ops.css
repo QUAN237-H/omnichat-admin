@@ -1340,6 +1340,128 @@ button.ops-pager-page[data-active]:hover:not(:disabled) {
   .ops-search {
     flex: 1 1 100%;
   }
+
+  /* Desk shell hides the sidebar; ops needs a bottom tab bar + padded main. */
+  .ops-app .app-main {
+    padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--s-4));
+  }
+
+  .ops-app .ops-page {
+    padding-inline: var(--s-3);
+  }
+
+  .ops-app .ops-page-head h1 {
+    font-size: var(--text-xl);
+  }
+
+  .ops-app .ops-table {
+    font-size: var(--text-xs);
+  }
+
+  .ops-app .ops-table th,
+  .ops-app .ops-table td {
+    padding: 0.55rem 0.5rem;
+  }
+
+  .ops-tabbar .app-tab {
+    position: relative;
+  }
+
+  .ops-tab-badge {
+    position: absolute;
+    top: 4px;
+    right: calc(50% - 18px);
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 10px;
+    font-weight: var(--weight-bold);
+    line-height: 16px;
+    text-align: center;
+  }
+}
+
+/* ---------- Mobile "More" sheet ---------- */
+
+.ops-more {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  align-items: end;
+}
+
+.ops-more-scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgb(14 17 40 / 0.45);
+  cursor: pointer;
+}
+
+.ops-more-sheet {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--s-3);
+  max-height: min(78dvh, 560px);
+  padding: 10px var(--s-4) calc(var(--s-5) + env(safe-area-inset-bottom));
+  border-radius: 20px 20px 0 0;
+  background: var(--surface);
+  box-shadow: 0 -12px 40px rgb(14 17 40 / 0.18);
+  overflow: auto;
+}
+
+.ops-more-handle {
+  width: 40px;
+  height: 5px;
+  margin: 0 auto 4px;
+  border-radius: 999px;
+  background: rgb(14 17 40 / 0.16);
+}
+
+.ops-more-title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.ops-more-nav {
+  display: grid;
+  gap: 4px;
+}
+
+.ops-more-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}
+
+.ops-more-link:hover {
+  background: var(--canvas);
+  text-decoration: none;
+}
+
+.ops-more-alerts {
+  margin-top: 4px;
+}
+
+@media (min-width: 769px) {
+  .ops-tabbar,
+  .ops-more {
+    display: none !important;
+  }
 }
 
 /* ---------- FX rate bar (Costs / Prices) ---------- */

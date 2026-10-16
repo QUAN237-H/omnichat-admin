@@ -13,6 +13,9 @@ export const INCIDENT_KINDS = [
   'status_post_failed',
   'document_ingest_failed',
   'usage_ledger_write_failed',
+  'shop_created',
+  'proxy_pool_low',
+  'proxy_pool_exhausted',
 ] as const;
 
 export type IncidentKind = (typeof INCIDENT_KINDS)[number];
